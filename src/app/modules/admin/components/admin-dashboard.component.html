@@ -1,0 +1,80 @@
+<div class="dashboard">
+  <h2 class="page-title">Admin Dashboard</h2>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon users-icon">
+          <i class="bi bi-people"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value">{{ stats.totalUsers }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon categories-icon">
+          <i class="bi bi-tags"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Categories</div>
+          <div class="stat-value">{{ stats.totalCategories }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon products-icon">
+          <i class="bi bi-box-seam"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Products</div>
+          <div class="stat-value">{{ stats.totalProducts }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon logs-icon">
+          <i class="bi bi-file-text"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Audit Logs</div>
+          <div class="stat-value">{{ stats.totalLogs }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Quick Actions</h5>
+    </div>
+    <div class="card-body">
+      <div class="action-list">
+        <a routerLink="/admin/users" class="action-item">
+          <i class="bi bi-person-plus"></i>
+          <span>Create New User</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </a>
+        <a routerLink="/admin/categories" class="action-item">
+          <i class="bi bi-plus-circle"></i>
+          <span>Add Category</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </a>
+        <a routerLink="/admin/products" class="action-item">
+          <i class="bi bi-plus-circle"></i>
+          <span>Add Product</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </a>
+        <a routerLink="/admin/audit-logs" class="action-item">
+          <i class="bi bi-search"></i>
+          <span>View Audit Logs</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

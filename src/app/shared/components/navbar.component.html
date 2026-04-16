@@ -1,0 +1,44 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <i class="bi bi-lightning-fill"></i>
+      <span>PromoEngineX</span>
+    </div>
+    <div class="navbar-right">
+      <!-- Notification Bell (internal users only) -->
+      <div *ngIf="isInternalUser" class="notification-bell">
+        <button class="btn-notif" (click)="toggleNotifications()">
+          <i class="bi bi-bell"></i>
+          <span *ngIf="unreadCount > 0" class="notif-badge">{{ unreadCount }}</span>
+        </button>
+
+        <div *ngIf="showNotifications" class="notif-dropdown">
+          <div class="notif-header">
+            <span>Notifications</span>
+            <span *ngIf="unreadCount > 0" class="unread-count">{{ unreadCount }} unread</span>
+          </div>
+          <div
+            *ngFor="let notif of notifications.slice(0, 8)"
+            class="notif-item"
+            [class.unread]="notif.status === 'UNREAD'">
+            <div class="notif-body">
+              <div class="notif-msg">{{ notif.message }}</div>
+              <div class="notif-meta">
+                <span class="badge bg-secondary">{{ notif.category }}</span>
+                <span class="notif-time">{{ notif.createdAt | date: 'short' }}</span>
+              </div>
+            </div>
+            <button
+              *ngIf="notif.status === 'UNREAD'"
+              class="btn-mark-read"
+              (click)="markAsRead(notif.notificationId, $event)">
+              ✓ Read
+            </button>
+          </div>
+          <div *ngIf="notifications.length === 0" class="notif-empty">No notifications</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,150 @@
+<div class="approvals-page">
+  <h2 class="page-title">Pending Approvals</h2>
+
+  <div *ngIf="successMessage" class="alert alert-success mb-3">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger mb-3">{{ errorMessage }}</div>
+
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'promotions'" (click)="setTab('promotions')">
+        Promotions
+        <span class="badge bg-warning ms-1">{{ promotions.length }}</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'campaigns'" (click)="setTab('campaigns')">
+        Campaigns
+        <span class="badge bg-warning ms-1">{{ campaigns.length }}</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'coupons'" (click)="setTab('coupons')">
+        Coupons
+        <span class="badge bg-warning ms-1">{{ coupons.length }}</span>
+      </button>
+    </li>
+  </ul>
+
+  <!-- Promotions Tab -->
+  <div *ngIf="activeTab === 'promotions'">
+    <div *ngIf="promotions.length === 0" class="text-center text-muted py-5">
+      <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
+      No pending promotions
+    </div>
+    <div class="table-responsive" *ngIf="promotions.length > 0">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Discount</th>
+            <th>Min Amount</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let promo of promotions">
+            <td><strong>{{ promo.name }}</strong><br><small class="text-muted">{{ promo.description }}</small></td>
+            <td><span class="badge bg-secondary">{{ promo.type }}</span></td>
+            <td>{{ promo.discountValue }}{{ promo.discountType === 'PERCENTAGE' ? '%' : '₹' }}</td>
+            <td>₹{{ promo.minAmount || 0 }}</td>
+            <td>{{ promo.startDate }}</td>
+            <td>{{ promo.endDate }}</td>
+            <td>
+              <button class="btn btn-sm btn-success me-1" (click)="approvePromotion(promo.promotionId)">
+                <i class="bi bi-check-lg"></i> Approve
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="rejectPromotion(promo.promotionId)">
+                <i class="bi bi-x-lg"></i> Reject
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Campaigns Tab -->
+  <div *ngIf="activeTab === 'campaigns'">
+    <div *ngIf="campaigns.length === 0" class="text-center text-muted py-5">
+      <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
+      No pending campaigns
+    </div>
+    <div class="table-responsive" *ngIf="campaigns.length > 0">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Age Target</th>
+            <th>Discount</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let campaign of campaigns">
+            <td><strong>{{ campaign.campaignName }}</strong><br><small class="text-muted">{{ campaign.description }}</small></td>
+            <td>{{ campaign.minAge }} – {{ campaign.maxAge }} yrs</td>
+            <td>{{ campaign.amount }}{{ campaign.discountType === 'PERCENTAGE' ? '%' : '₹' }}</td>
+            <td>{{ campaign.startDate }}</td>
+            <td>{{ campaign.endDate }}</td>
+            <td>
+              <button class="btn btn-sm btn-success me-1" (click)="approveCampaign(campaign.campaignId)">
+                <i class="bi bi-check-lg"></i> Approve
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="rejectCampaign(campaign.campaignId)">
+                <i class="bi bi-x-lg"></i> Reject
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Coupons Tab -->
+  <div *ngIf="activeTab === 'coupons'">
+    <div *ngIf="coupons.length === 0" class="text-center text-muted py-5">
+      <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
+      No pending coupons
+    </div>
+    <div class="table-responsive" *ngIf="coupons.length > 0">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Discount</th>
+            <th>Min Cart</th>
+            <th>Usage Limit</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let coupon of coupons">
+            <td><strong>{{ coupon.couponCode }}</strong></td>
+            <td>{{ coupon.couponName }}</td>
+            <td>{{ coupon.amount }}{{ coupon.discountType === 'PERCENTAGE' ? '%' : '₹' }}</td>
+            <td>₹{{ coupon.minCartValue }}</td>
+            <td>{{ coupon.usageLimit }}</td>
+            <td>{{ coupon.startDate }}</td>
+            <td>{{ coupon.endDate }}</td>
+            <td>
+              <button class="btn btn-sm btn-success me-1" (click)="approveCoupon(coupon.couponId)">
+                <i class="bi bi-check-lg"></i> Approve
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="rejectCoupon(coupon.couponId)">
+                <i class="bi bi-x-lg"></i> Reject
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,82 @@
-/* You can add global styles to this file, and also import other style files */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #f0f4f8;
+  color: #2d3748;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #edf2f7;
+  background: transparent;
+}
+.card-title { margin: 0; font-weight: 600; color: #2d3748; font-size: 1rem; }
+.card-body { padding: 20px; }
+
+/* Buttons */
+.btn-primary {
+  background: #4a5568;
+  border-color: #4a5568;
+  color: white;
+}
+.btn-primary:hover, .btn-primary:focus {
+  background: #2d3748;
+  border-color: #2d3748;
+  color: white;
+}
+.btn-outline-primary {
+  color: #4a5568;
+  border-color: #4a5568;
+}
+.btn-outline-primary:hover {
+  background: #4a5568;
+  border-color: #4a5568;
+  color: white;
+}
+
+/* Tables */
+.table thead th {
+  background: #f7fafc;
+  color: #718096;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 600;
+}
+.table td {
+  color: #2d3748;
+  vertical-align: middle;
+  border-bottom: 1px solid #edf2f7;
+}
+
+/* Badges */
+.badge.bg-success { background-color: #48bb78 !important; }
+.badge.bg-warning { background-color: #ed8936 !important; color: white !important; }
+.badge.bg-danger  { background-color: #fc8181 !important; }
+.badge.bg-secondary { background-color: #718096 !important; }
+
+/* Forms */
+.form-control:focus, .form-select:focus {
+  border-color: #718096;
+  box-shadow: 0 0 0 3px rgba(113,128,150,0.15);
+}
+
+/* Page titles */
+.page-title {
+  color: #2d3748;
+  font-weight: 700;
+  margin-bottom: 28px;
+  font-size: 1.7rem;
+}
+

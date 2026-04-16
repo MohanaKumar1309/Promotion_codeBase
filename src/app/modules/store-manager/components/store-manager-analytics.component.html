@@ -1,0 +1,106 @@
+<div class="analytics-page">
+  <h2 class="page-title">Analytics Overview</h2>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading analytics...</p>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="card-icon" style="background:#edf2f7; color:#4a5568">
+          <i class="bi bi-bar-chart-fill"></i>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Total Redemptions</div>
+          <div class="card-value">{{ totalEvents }}</div>
+        </div>
+      </div>
+      <div class="summary-card" *ngFor="let row of chartRows">
+        <div class="card-icon" [style.background]="row.color + '22'" [style.color]="row.color">
+          <i class="bi bi-{{ row.type === 'CAMPAIGN' ? 'megaphone' : row.type === 'COUPON' ? 'ticket-perforated' : 'percent' }}"></i>
+        </div>
+        <div class="card-body">
+          <div class="card-label">{{ row.label }} Redemptions</div>
+          <div class="card-value">{{ row.events }}</div>
+          <div class="card-sub">₹{{ row.amount | number: '1.2-2' }} discount given</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Redemption Events Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h5>Redemption Events by Type</h5>
+        <span class="total-badge">{{ totalEvents }} total</span>
+      </div>
+      <div class="chart-body">
+        <div class="bar-group" *ngFor="let row of chartRows">
+          <div class="bar-label">{{ row.label }}</div>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="eventPct(row.events)" [style.background]="row.color">
+              <span class="bar-tip" *ngIf="row.events > 0">{{ row.events }}</span>
+            </div>
+          </div>
+          <div class="bar-end">{{ row.events }}</div>
+        </div>
+        <div *ngIf="totalEvents === 0" class="no-data">No redemption events recorded yet.</div>
+      </div>
+    </div>
+
+    <!-- Discount Amount Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h5>Total Discount Given by Type (₹)</h5>
+        <span class="total-badge">₹{{ totalAmount | number: '1.2-2' }} total</span>
+      </div>
+      <div class="chart-body">
+        <div class="bar-group" *ngFor="let row of chartRows">
+          <div class="bar-label">{{ row.label }}</div>
+          <div class="bar-track">
+            <div class="bar-fill amount-bar" [style.width.%]="amountPct(row.amount)" [style.background]="row.color">
+              <span class="bar-tip" *ngIf="row.amount > 0">₹{{ row.amount | number: '1.0-0' }}</span>
+            </div>
+          </div>
+          <div class="bar-end">₹{{ row.amount | number: '1.2-2' }}</div>
+        </div>
+        <div *ngIf="totalAmount === 0" class="no-data">No discount amounts recorded yet.</div>
+      </div>
+    </div>
+
+    <!-- Breakdown Table -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h5>Detailed Breakdown</h5>
+      </div>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Redemptions</th>
+            <th>Total Discount Given</th>
+            <th>Avg Discount / Event</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of chartRows">
+            <td>
+              <span class="type-badge" [style.background]="row.color">{{ row.label }}</span>
+            </td>
+            <td>{{ row.events }}</td>
+            <td>₹{{ row.amount | number: '1.2-2' }}</td>
+            <td>{{ row.events > 0 ? '₹' + (row.amount / row.events | number: '1.2-2') : '—' }}</td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>Total</strong></td>
+            <td><strong>{{ totalEvents }}</strong></td>
+            <td><strong>₹{{ totalAmount | number: '1.2-2' }}</strong></td>
+            <td><strong>{{ totalEvents > 0 ? '₹' + (totalAmount / totalEvents | number: '1.2-2') : '—' }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

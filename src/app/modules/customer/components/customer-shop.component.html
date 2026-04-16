@@ -1,0 +1,104 @@
+<div class="shop-page">
+  <div class="shop-header">
+    <div class="header-content">
+      <h1>PromoEngineX Shop</h1>
+      <p>Discover amazing products with exclusive offers</p>
+      <div class="header-actions">
+        <input
+          type="text"
+          class="search-box"
+          [(ngModel)]="searchTerm"
+          (keyup)="onSearch()"
+          placeholder="Search products...">
+        <a routerLink="/customer/cart" class="cart-link">
+          <i class="bi bi-cart"></i>
+          <span *ngIf="cartCount > 0">{{ cartCount }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Coupons Banner -->
+  <div class="coupons-banner" *ngIf="coupons.length > 0">
+    <div class="coupons-scroll">
+      <div *ngFor="let coupon of coupons" class="coupon-card">
+        <div class="coupon-code">{{ coupon.couponCode }}</div>
+        <div class="coupon-discount">{{ coupon.amount }}{{ coupon.discountType === 'PERCENTAGE' ? '%' : '₹' }} OFF</div>
+        <div class="coupon-min">Min: ₹{{ coupon.minCartValue }}</div>
+        <div class="coupon-usage">{{ coupon.usageLimit - coupon.usageCount }} left</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Campaigns Banner -->
+  <div class="campaigns-banner" *ngIf="campaigns.length > 0">
+    <div class="banner-label"><i class="bi bi-megaphone-fill"></i> Active Campaigns for You</div>
+    <div class="campaigns-scroll">
+      <div *ngFor="let campaign of campaigns" class="campaign-card">
+        <div class="campaign-name">{{ campaign.campaignName }}</div>
+        <div class="campaign-discount">
+          {{ campaign.discountType === 'BOGO' ? 'Buy 1 Get 1' : campaign.amount + (campaign.discountType === 'PERCENTAGE' ? '%' : '₹') + ' OFF' }}
+        </div>
+        <div class="campaign-age"><i class="bi bi-person"></i> Age {{ campaign.minAge }}–{{ campaign.maxAge }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Filter Bar -->
+  <div class="category-filter-bar">
+    <div class="filter-inner">
+      <button
+        (click)="filterByCategory(null)"
+        [class.active]="selectedCategoryId === null"
+        class="category-filter-btn">
+        All Products
+      </button>
+      <button
+        *ngFor="let cat of categories"
+        (click)="filterByCategory(cat.categoryId)"
+        [class.active]="selectedCategoryId === cat.categoryId"
+        class="category-filter-btn">
+        {{ cat.categoryName }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Products Section -->
+  <div class="products-section">
+    <div class="products-grid" *ngIf="filteredProducts.length > 0">
+      <div *ngFor="let product of filteredProducts" class="product-card">
+        <div class="product-image">
+          <img [src]="product.imageUrl || 'assets/placeholder.png'" [alt]="product.name"
+               (error)="$any($event.target).src='https://placehold.co/250x180?text=No+Image'">
+          <div *ngIf="getDiscountedPrice(product) !== null" class="badge-offer promo-badge">
+            <i class="bi bi-percent"></i> Promo
+          </div>
+          <div *ngIf="getCampaignLabel(product)" class="badge-offer campaign-badge">
+            <i class="bi bi-megaphone-fill"></i> {{ getCampaignLabel(product) }}
+          </div>
+        </div>
+        <div class="product-info">
+          <h6>{{ product.name }}</h6>
+          <p class="product-category">{{ product.categoryName }}</p>
+          <p class="product-sku text-muted small">SKU: {{ product.sku }}</p>
+          <div class="product-footer">
+            <div class="price-wrapper">
+              <span *ngIf="getDiscountedPrice(product) !== null" class="original-price">₹{{ product.price | number: '1.2-2' }}</span>
+              <span class="price" [class.discounted]="getDiscountedPrice(product) !== null">
+                ₹{{ (getDiscountedPrice(product) ?? product.price) | number: '1.2-2' }}
+              </span>
+            </div>
+            <button (click)="addToCart(product)" class="btn-add-cart">
+              <i class="bi bi-cart-plus"></i> Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredProducts.length === 0" class="no-products">
+      <i class="bi bi-inbox"></i>
+      <p>No products found</p>
+    </div>
+  </div>
+</div>

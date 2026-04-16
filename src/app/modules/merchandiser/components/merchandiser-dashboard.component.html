@@ -1,0 +1,50 @@
+<div class="dashboard">
+  <h2 class="page-title">Merchandiser Dashboard</h2>
+  
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="stat-card">
+        <div class="stat-icon promo-icon">
+          <i class="bi bi-percent"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Approved Promotions</div>
+          <div class="stat-value">{{ stats.activePromotions }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card">
+        <div class="stat-icon pending-icon">
+          <i class="bi bi-clock-history"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Pending Promotions</div>
+          <div class="stat-value">{{ stats.pendingPromotions }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card">
+        <div class="stat-icon done-icon">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Rejected Promotions</div>
+          <div class="stat-value">{{ stats.completedPromotions }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Quick Actions</h5>
+    </div>
+    <div class="card-body">
+      <a routerLink="/merchandiser/promotions" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Create New Promotion
+      </a>
+    </div>
+  </div>
+</div>

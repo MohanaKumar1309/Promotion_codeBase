@@ -1,0 +1,133 @@
+<div class="users-page">
+  <h2 class="page-title">Manage Users</h2>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Create New User</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="userForm" (ngSubmit)="onCreateUser()">
+            <div class="form-group mb-3">
+              <label for="name" class="form-label">Full Name</label>
+              <input 
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                placeholder="Enter full name"
+                [class.is-invalid]="isFieldInvalid('name')">
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email"
+                class="form-control"
+                id="email"
+                formControlName="email"
+                placeholder="Enter email"
+                [class.is-invalid]="isFieldInvalid('email')">
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input 
+                type="password"
+                class="form-control"
+                id="password"
+                formControlName="password"
+                placeholder="Enter password"
+                [class.is-invalid]="isFieldInvalid('password')">
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="phone" class="form-label">Phone (Optional)</label>
+              <input 
+                type="tel"
+                class="form-control"
+                id="phone"
+                formControlName="phone"
+                placeholder="Enter phone number">
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="role" class="form-label">Role</label>
+              <select 
+                class="form-control"
+                id="role"
+                formControlName="role"
+                [class.is-invalid]="isFieldInvalid('role')">
+                <option value="">Select Role</option>
+                <option value="MERCHANDISER">Merchandiser</option>
+                <option value="MARKETING_MANAGER">Marketing Manager</option>
+                <option value="STORE_MANAGER">Store Manager</option>
+              </select>
+            </div>
+
+            <div *ngIf="successMessage" class="alert alert-success" role="alert">
+              {{ successMessage }}
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+              {{ errorMessage }}
+            </div>
+
+            <button 
+              type="submit"
+              class="btn btn-primary w-100"
+              [disabled]="userForm.invalid || loading">
+              {{ loading ? 'Creating...' : 'Create User' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Users List</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of users">
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
+                      {{ formatRole(user.role) }}
+                    </span>
+                  </td>
+                  <td>
+                    <button 
+                      class="btn btn-sm btn-danger"
+                      (click)="onDeleteUser(user.userId)">
+                      <i class="bi bi-trash"></i> Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="users.length === 0">
+                  <td colspan="4" class="text-center text-muted py-4">
+                    No users found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
