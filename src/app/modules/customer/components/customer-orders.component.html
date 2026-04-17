@@ -1,0 +1,48 @@
+<div class="orders-page">
+  <h2 class="page-title">My Orders</h2>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-secondary" role="status"></div>
+    <p class="mt-2 text-muted">Loading orders...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <div *ngIf="!loading && orders.length === 0 && !errorMessage" class="empty-state">
+    <i class="bi bi-bag-x"></i>
+    <h5>No orders yet</h5>
+    <p class="text-muted">Your completed orders will appear here.</p>
+  </div>
+
+  <div *ngIf="!loading && orders.length > 0" class="orders-list">
+    <div *ngFor="let order of orders; let i = index" class="order-card">
+      <div class="order-header">
+        <div class="order-id">
+          <span class="order-num">#{{ order.orderId || (orders.length - i) }}</span>
+          <span class="order-date">{{ order.createdAt | date: 'dd MMM yyyy, hh:mm a' }}</span>
+        </div>
+        <span class="badge bg-success">Completed</span>
+      </div>
+
+      <div class="order-body">
+        <div class="amount-row">
+          <span class="label">Subtotal</span>
+          <span class="value">₹{{ order.totalAmount | number: '1.2-2' }}</span>
+        </div>
+        <div class="amount-row discount" *ngIf="hasDiscount(order)">
+          <span class="label">Discount Applied</span>
+          <span class="value text-success">− ₹{{ order.discountAmount | number: '1.2-2' }}</span>
+        </div>
+        <div class="amount-row total">
+          <span class="label">Total Paid</span>
+          <span class="value fw-bold">₹{{ order.finalAmount | number: '1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="order-footer" *ngIf="hasDiscount(order)">
+        <i class="bi bi-tag-fill text-success"></i>
+        <small class="text-muted">Savings from: {{ formatApplied(order) }}</small>
+      </div>
+    </div>
+  </div>
+</div>

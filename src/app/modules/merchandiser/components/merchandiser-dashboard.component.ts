@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { PromotionService, CatalogService } from '../../../shared/services';
 
 @Component({
   selector: 'app-merchandiser-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './merchandiser-dashboard.component.html',
   styleUrl: './merchandiser-dashboard.component.css'
 })

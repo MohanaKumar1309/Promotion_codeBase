@@ -1,18 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CampaignService, CatalogService } from '../../../shared/services';
 import { Campaign, CreateCampaignRequest, Product, Category } from '../../../shared/models';
 
 @Component({
   selector: 'app-marketing-manager-campaigns',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './marketing-manager-campaigns.component.html',
   styleUrl: './marketing-manager-campaigns.component.css'
 })
 export class MarketingManagerCampaignsComponent implements OnInit {
   campaignForm: FormGroup;
+  allCampaigns: Campaign[] = [];
   campaigns: Campaign[] = [];
   products: Product[] = [];
   categories: Category[] = [];
@@ -20,23 +22,37 @@ export class MarketingManagerCampaignsComponent implements OnInit {
   selectedCategoryIds: number[] = [];
   loading: boolean = false;
   successMessage: string = '';
+  errorMessage: string = '';
+  filterStatus: string = '';
 
   constructor(
     private fb: FormBuilder,
     private campaignService: CampaignService,
-    private catalogService: CatalogService
+    private catalogService: CatalogService,
+    private route: ActivatedRoute
   ) {
     this.campaignForm = this.fb.group({
       campaignName: ['', Validators.required],
       description: ['', Validators.required],
-      minAge: [18, [Validators.required, Validators.min(1)]],
-      maxAge: [65, [Validators.required, Validators.min(1)]],
+      minAge: [18, [Validators.required, Validators.min(1), Validators.max(120)]],
+      maxAge: [65, [Validators.required, Validators.min(1), Validators.max(120)]],
       discountType: ['FLAT', Validators.required],
-      amount: ['', [Validators.required, Validators.min(0)]],
+      amount: ['', [Validators.required, Validators.min(0.01)]],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       type: ['PRODUCT', Validators.required]
     });
+  }
+
+  isFieldInvalid(field: string): boolean {
+    const f = this.campaignForm.get(field);
+    return !!(f && f.invalid && (f.dirty || f.touched));
+  }
+
+  applyFilter(): void {
+    this.campaigns = this.filterStatus
+      ? this.allCampaigns.filter(c => c.status === this.filterStatus)
+      : [...this.allCampaigns];
   }
 
   get selectedType(): string {
@@ -49,6 +65,10 @@ export class MarketingManagerCampaignsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.filterStatus = params['status'] || '';
+      this.applyFilter();
+    });
     this.loadProducts();
     this.loadCategories();
     this.loadCampaigns();
@@ -78,7 +98,8 @@ export class MarketingManagerCampaignsComponent implements OnInit {
     this.campaignService.getCampaigns().subscribe({
       next: (response) => {
         if (response.success) {
-          this.campaigns = response.data;
+          this.allCampaigns = response.data;
+          this.applyFilter();
         }
       }
     });
@@ -101,15 +122,26 @@ export class MarketingManagerCampaignsComponent implements OnInit {
   }
 
   onCreateCampaign(): void {
-    if (this.campaignForm.invalid) return;
-
+    if (this.campaignForm.invalid) {
+      this.campaignForm.markAllAsTouched();
+      return;
+    }
+    const minAge = this.campaignForm.value.minAge;
+    const maxAge = this.campaignForm.value.maxAge;
+    if (minAge >= maxAge) {
+      this.errorMessage = 'Min age must be less than max age.';
+      setTimeout(() => { this.errorMessage = ''; }, 3000);
+      return;
+    }
     const type = this.selectedType;
     if (type === 'PRODUCT' && this.selectedProductIds.length === 0) {
-      this.successMessage = '';
+      this.errorMessage = 'Please select at least one product.';
+      setTimeout(() => { this.errorMessage = ''; }, 3000);
       return;
     }
     if (type === 'CATEGORY' && this.selectedCategoryIds.length === 0) {
-      this.successMessage = '';
+      this.errorMessage = 'Please select at least one category.';
+      setTimeout(() => { this.errorMessage = ''; }, 3000);
       return;
     }
 
@@ -124,15 +156,17 @@ export class MarketingManagerCampaignsComponent implements OnInit {
     this.campaignService.createCampaign(request).subscribe({
       next: () => {
         this.successMessage = 'Campaign created!';
-        this.campaignForm.reset();
+        this.campaignForm.reset({ minAge: 18, maxAge: 65, discountType: 'FLAT', type: 'PRODUCT' });
         this.selectedProductIds = [];
         this.selectedCategoryIds = [];
         this.loadCampaigns();
         this.loading = false;
         setTimeout(() => { this.successMessage = ''; }, 3000);
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
+        this.errorMessage = err?.error?.message || 'Failed to create campaign.';
+        setTimeout(() => { this.errorMessage = ''; }, 3000);
       }
     });
   }

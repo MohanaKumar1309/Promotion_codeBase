@@ -27,7 +27,8 @@ const MENU_MAP: { [key: string]: { icon: string; label: string; route: string }[
   ],
   CUSTOMER: [
     { icon: "shop", label: "Shop", route: "/customer/shop" },
-    { icon: "cart", label: "Cart", route: "/customer/cart" }
+    { icon: "cart", label: "Cart", route: "/customer/cart" },
+    { icon: "bag-check", label: "My Orders", route: "/customer/orders" }
   ]
 };
 

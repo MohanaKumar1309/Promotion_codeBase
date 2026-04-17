@@ -33,6 +33,7 @@ import { StoreManagerAnalyticsComponent } from './modules/store-manager/componen
 import { CustomerLayoutComponent } from './modules/customer/customer-layout.component';
 import { CustomerShopComponent } from './modules/customer/components/customer-shop.component';
 import { CustomerCartComponent } from './modules/customer/components/customer-cart.component';
+import { CustomerOrdersComponent } from './modules/customer/components/customer-orders.component';
 
 export const routes: Routes = [
   {
@@ -115,7 +116,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'shop', pathMatch: 'full' },
       { path: 'shop', component: CustomerShopComponent },
-      { path: 'cart', component: CustomerCartComponent }
+      { path: 'cart', component: CustomerCartComponent },
+      { path: 'orders', component: CustomerOrdersComponent }
     ]
   },
 

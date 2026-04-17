@@ -16,7 +16,7 @@
           placeholder="Enter your full name"
           [class.is-invalid]="isFieldInvalid('name')">
         <small class="text-danger" *ngIf="isFieldInvalid('name')">
-          Full name is required
+          Full name is required (min 2 characters)
         </small>
       </div>
 
@@ -36,23 +36,31 @@
 
       <div class="form-group">
         <label for="phone" class="form-label">Phone (Optional)</label>
-        <input 
+        <input
           type="tel"
           class="form-control"
           id="phone"
           formControlName="phone"
-          placeholder="Enter your phone number">
+          placeholder="10-digit mobile number"
+          [class.is-invalid]="isFieldInvalid('phone')">
+        <small class="text-danger" *ngIf="isFieldInvalid('phone')">
+          Enter a valid 10-digit phone number
+        </small>
       </div>
 
       <div class="form-group">
         <label for="age" class="form-label">Age (Optional)</label>
-        <input 
+        <input
           type="number"
           class="form-control"
           id="age"
           formControlName="age"
           placeholder="Enter your age"
-          min="1">
+          min="1" max="120"
+          [class.is-invalid]="isFieldInvalid('age')">
+        <small class="text-danger" *ngIf="isFieldInvalid('age')">
+          Age must be between 1 and 120
+        </small>
       </div>
 
       <div class="form-group">

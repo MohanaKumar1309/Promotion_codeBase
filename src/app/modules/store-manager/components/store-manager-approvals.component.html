@@ -38,7 +38,7 @@
             <th>Name</th>
             <th>Type</th>
             <th>Discount</th>
-            <th>Min Amount</th>
+            <th>Min Qty</th>
             <th>Start</th>
             <th>End</th>
             <th>Actions</th>
@@ -49,7 +49,7 @@
             <td><strong>{{ promo.name }}</strong><br><small class="text-muted">{{ promo.description }}</small></td>
             <td><span class="badge bg-secondary">{{ promo.type }}</span></td>
             <td>{{ promo.discountValue }}{{ promo.discountType === 'PERCENTAGE' ? '%' : '₹' }}</td>
-            <td>₹{{ promo.minAmount || 0 }}</td>
+            <td>{{ promo.minQuantity || '-' }}</td>
             <td>{{ promo.startDate }}</td>
             <td>{{ promo.endDate }}</td>
             <td>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { RouterModule, ActivatedRoute } from "@angular/router";
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { PromotionService, CatalogService } from "../../../shared/services";
 import { Promotion, Product, Category } from "../../../shared/models";
@@ -13,6 +13,7 @@ import { Promotion, Product, Category } from "../../../shared/models";
   styleUrl: "./merchandiser-promotions.component.css"
 })
 export class MerchandiserPromotionsComponent implements OnInit {
+  allPromotions: Promotion[] = [];
   promotions: Promotion[] = [];
   products: Product[] = [];
   categories: Category[] = [];
@@ -21,12 +22,14 @@ export class MerchandiserPromotionsComponent implements OnInit {
   errorMessage: string = "";
   selectedProductIds: number[] = [];
   selectedCategoryIds: number[] = [];
+  filterStatus: string = '';
   promotionForm: any;
 
   constructor(
     private promotionService: PromotionService,
     private catalogService: CatalogService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     this.promotionForm = this.fb.group({
       name: ["", Validators.required],
@@ -35,16 +38,27 @@ export class MerchandiserPromotionsComponent implements OnInit {
       discountValue: [0, [Validators.required, Validators.min(0)]],
       type: ["PRODUCT", Validators.required],
       minQuantity: [1],
-      minAmount: [0],
       startDate: ["", Validators.required],
       endDate: ["", Validators.required]
     });
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.filterStatus = params['status'] || '';
+      this.applyFilter();
+    });
     this.loadPromotions();
     this.loadProducts();
     this.loadCategories();
+  }
+
+  applyFilter(): void {
+    if (this.filterStatus) {
+      this.promotions = this.allPromotions.filter(p => p.status === this.filterStatus);
+    } else {
+      this.promotions = [...this.allPromotions];
+    }
   }
 
   get selectedType(): string {
@@ -58,7 +72,10 @@ export class MerchandiserPromotionsComponent implements OnInit {
 
   loadPromotions(): void {
     this.promotionService.getPromotions().subscribe({
-      next: (response) => { this.promotions = response.data || []; },
+      next: (response) => {
+        this.allPromotions = response.data || [];
+        this.applyFilter();
+      },
       error: () => { this.errorMessage = "Failed to load promotions"; }
     });
   }
@@ -118,7 +135,7 @@ export class MerchandiserPromotionsComponent implements OnInit {
         this.loading = false;
         if (response.success) {
           this.successMessage = "Promotion created successfully!";
-          this.promotionForm.reset({ discountType: 'FLAT', type: 'PRODUCT', minQuantity: 1, minAmount: 0 });
+          this.promotionForm.reset({ discountType: 'FLAT', type: 'PRODUCT', minQuantity: 1 });
           this.selectedProductIds = [];
           this.selectedCategoryIds = [];
           setTimeout(() => (this.successMessage = ""), 3000);

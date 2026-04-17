@@ -117,7 +117,6 @@ export class CustomerCartComponent implements OnInit {
       }
       if (!promoBase) continue;
       if (promo.minQuantity && promoQty < promo.minQuantity) continue;
-      if (promo.minAmount && promoBase < promo.minAmount) continue;
       if (promo.discountType === 'FLAT') total += promo.discountValue;
       else if (promo.discountType === 'PERCENTAGE') total += promoBase * promo.discountValue / 100;
       else if (promo.discountType === 'BOGO') total += promoBase / 2;

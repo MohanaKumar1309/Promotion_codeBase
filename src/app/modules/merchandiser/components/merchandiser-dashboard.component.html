@@ -2,8 +2,8 @@
   <h2 class="page-title">Merchandiser Dashboard</h2>
   
   <div class="row g-4 mb-4">
-    <div class="col-md-4">
-      <div class="stat-card">
+    <div class="col-md-4 d-flex">
+      <div class="stat-card clickable" [routerLink]="['/merchandiser/promotions']" [queryParams]="{status: 'APPROVED'}">
         <div class="stat-icon promo-icon">
           <i class="bi bi-percent"></i>
         </div>
@@ -13,8 +13,8 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="stat-card">
+    <div class="col-md-4 d-flex">
+      <div class="stat-card clickable" [routerLink]="['/merchandiser/promotions']" [queryParams]="{status: 'PENDING'}">
         <div class="stat-icon pending-icon">
           <i class="bi bi-clock-history"></i>
         </div>
@@ -24,8 +24,8 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="stat-card">
+    <div class="col-md-4 d-flex">
+      <div class="stat-card clickable" [routerLink]="['/merchandiser/promotions']" [queryParams]="{status: 'REJECTED'}">
         <div class="stat-icon done-icon">
           <i class="bi bi-check-circle"></i>
         </div>

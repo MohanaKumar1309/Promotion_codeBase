@@ -2,8 +2,8 @@
   <h2 class="page-title">Marketing Dashboard</h2>
   
   <div class="row g-4 mb-4">
-    <div class="col-md-3">
-      <div class="stat-card">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/marketing-manager/campaigns">
         <div class="stat-icon campaigns-icon">
           <i class="bi bi-megaphone"></i>
         </div>
@@ -13,8 +13,8 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="stat-card">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/marketing-manager/coupons">
         <div class="stat-icon coupons-icon">
           <i class="bi bi-ticket-perforated"></i>
         </div>
@@ -24,8 +24,8 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="stat-card">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" [routerLink]="['/marketing-manager/campaigns']" [queryParams]="{status: 'PENDING'}">
         <div class="stat-icon pending-icon">
           <i class="bi bi-clock-history"></i>
         </div>
@@ -35,8 +35,8 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="stat-card">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/marketing-manager/coupons">
         <div class="stat-icon used-icon">
           <i class="bi bi-check-circle"></i>
         </div>

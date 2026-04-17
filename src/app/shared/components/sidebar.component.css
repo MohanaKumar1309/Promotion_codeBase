@@ -2,15 +2,16 @@
   background: #f7fafc;
   border-right: 1px solid #e2e8f0;
   width: 250px;
-  min-height: 100vh;
+  height: calc(100vh - 56px);
   position: fixed;
   left: 0;
-  top: 0;
+  top: 56px;
   z-index: 100;
   box-shadow: 2px 0 8px rgba(0,0,0,0.06);
   transition: transform 0.3s;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .sidebar-profile {
@@ -19,7 +20,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 60px;
+  flex-shrink: 0;
 }
 
 .profile-avatar {
@@ -147,6 +148,5 @@
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
   .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
-  .sidebar-profile { margin-top: 0; }
   .nav-item { padding: 12px 20px; }
 }

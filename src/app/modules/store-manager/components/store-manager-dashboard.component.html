@@ -3,8 +3,8 @@
 
   <!-- Analytics Cards -->
   <div class="row g-4 mb-4">
-    <div class="col-md-3">
-      <div class="stat-card">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/store-manager/analytics">
         <div class="stat-icon campaigns-icon">
           <i class="bi bi-megaphone"></i>
         </div>
@@ -15,8 +15,8 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="stat-card">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/store-manager/analytics">
         <div class="stat-icon coupons-icon">
           <i class="bi bi-ticket-perforated"></i>
         </div>
@@ -27,8 +27,8 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="stat-card">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/store-manager/analytics">
         <div class="stat-icon revenue-icon">
           <i class="bi bi-percent"></i>
         </div>
@@ -39,17 +39,14 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="stat-card">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/store-manager/approvals">
         <div class="stat-icon pending-icon">
           <i class="bi bi-clock-history"></i>
         </div>
         <div class="stat-content">
           <div class="stat-label">Pending Approvals</div>
           <div class="stat-value">{{ totalPendingApprovals }}</div>
-          <div class="stat-sub">
-            <a routerLink="/store-manager/approvals" class="text-warning">Review now</a>
-          </div>
         </div>
       </div>
     </div>

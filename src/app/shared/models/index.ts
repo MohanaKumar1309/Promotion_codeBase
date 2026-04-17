@@ -44,7 +44,6 @@ export interface Promotion {
   status: string;
   discountType: string;
   discountValue: number;
-  minAmount?: number;
   minQuantity?: number;
   startDate: string;
   endDate: string;
@@ -165,7 +164,6 @@ export interface CreatePromotionRequest {
   description?: string;
   discountType: string;
   discountValue: number;
-  minAmount?: number;
   minQuantity?: number;
   startDate: string;
   endDate: string;

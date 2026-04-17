@@ -14,4 +14,8 @@ export class CheckoutService {
   checkout(request: CheckoutRequest): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/checkout`, request);
   }
+
+  getOrderHistory(): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/my-orders`);
+  }
 }

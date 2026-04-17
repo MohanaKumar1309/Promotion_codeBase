@@ -23,12 +23,12 @@ export class SignupComponent {
     private authService: AuthService
   ) {
     this.signupForm = this.fb.group({
-      name: ['', [Validators.required]],
+      name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-      phone: [''],
-      age: ['', [Validators.min(1)]]
+      phone: ['', [Validators.pattern(/^\d{10}$/)]],
+      age: ['', [Validators.min(1), Validators.max(120)]]
     }, {
       validators: this.passwordMatchValidator
     });
