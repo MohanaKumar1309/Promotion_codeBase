@@ -1,0 +1,62 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>{{ isAdmin ? 'Admin Portal Login' : 'Customer Login' }}</h1>
+      <p>{{ isAdmin ? 'Sign in to access the admin dashboard' : 'Sign in to your account' }}</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          formControlName="email"
+          placeholder="Enter your email"
+          [class.is-invalid]="isFieldInvalid('email')">
+        @if (isFieldInvalid('email')) {
+          <small class="text-danger">
+            Please enter a valid email address
+          </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          formControlName="password"
+          placeholder="Enter your password"
+          [class.is-invalid]="isFieldInvalid('password')">
+        @if (isFieldInvalid('password')) {
+          <small class="text-danger">
+            Password is required
+          </small>
+        }
+      </div>
+
+      @if (errorMessage) {
+        <div class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100"
+        [disabled]="loginForm.invalid || loading">
+        {{ loading ? 'Signing in...' : 'Sign In' }}
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <a href="javascript:void(0)" (click)="goBack()" class="back-link">
+        ← Back to Home
+      </a>
+    </div>
+
+  </div>
+</div>

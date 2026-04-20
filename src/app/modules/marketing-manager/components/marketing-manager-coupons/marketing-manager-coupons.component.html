@@ -1,0 +1,181 @@
+<div class="coupons-page">
+  <div class="page-header">
+    <h2>Coupon Management</h2>
+    <p>Generate and manage discount coupons</p>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Generate New Coupon</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="couponForm" (ngSubmit)="onCreateCoupon()">
+            <div class="form-group mb-3">
+              <label class="form-label">Coupon Code</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="couponCode"
+                placeholder="e.g., PROMO10">
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Coupon Name</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="couponName"
+                placeholder="e.g., Summer Sale">
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Description</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description"
+                placeholder="Coupon description">
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Discount Type</label>
+              <select class="form-control" formControlName="discountType">
+                <option value="FLAT">Flat Amount</option>
+                <option value="PERCENTAGE">Percentage</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Discount Amount</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="amount"
+                min="0"
+                placeholder="0">
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Minimum Cart Value</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="minCartValue"
+                min="0"
+                placeholder="0">
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Maximum Discount</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="maxDiscount"
+                min="0"
+                placeholder="0">
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Usage Limit</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="usageLimit"
+                min="1"
+                placeholder="100">
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">Start Date</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="startDate">
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">End Date</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="endDate">
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary w-100"
+              [disabled]="loading">
+              {{ loading ? 'Creating...' : 'Create Coupon' }}
+            </button>
+          </form>
+
+          @if (successMessage) {
+            <div class="alert alert-success mt-3">
+              {{ successMessage }}
+            </div>
+          }
+          @if (errorMessage) {
+            <div class="alert alert-danger mt-3">
+              {{ errorMessage }}
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Active Coupons</h5>
+        </div>
+        <div class="card-body">
+          @if (coupons.length > 0) {
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Discount</th>
+                    <th>Min Purchase</th>
+                    <th>Usage</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (coupon of coupons; track coupon.couponId) {
+                    <tr>
+                      <td><strong>{{ coupon.couponCode }}</strong></td>
+                      <td>{{ coupon.amount }}{{ coupon.discountType === 'PERCENTAGE' ? '%' : '₹' }} ({{ coupon.discountType }})</td>
+                      <td>₹{{ coupon.minCartValue | number: '1.2-2' }}</td>
+                      <td>{{ coupon.usageCount }}/{{ coupon.usageLimit }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="coupon.status === 'ACTIVE' ? 'bg-success' : 'bg-secondary'">
+                          {{ coupon.status }}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          (click)="onDeleteCoupon(coupon.couponId)"
+                          class="btn btn-sm btn-danger">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+          @if (coupons.length === 0) {
+            <div class="text-center text-muted py-5">
+              <p>No coupons created yet</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

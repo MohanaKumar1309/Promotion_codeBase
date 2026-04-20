@@ -35,6 +35,7 @@ export interface Product {
   categoryId: number;
   categoryName: string;
   imageUrl?: string;
+  stockQuantity?: number;
 }
 
 export interface Promotion {
@@ -157,6 +158,7 @@ export interface CreateProductRequest {
   price: number;
   categoryId: number;
   imageUrl?: string;
+  stockQuantity?: number;
 }
 
 export interface CreatePromotionRequest {

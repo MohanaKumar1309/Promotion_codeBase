@@ -1,5 +1,5 @@
-import { NavbarComponent } from './navbar.component';
-import { SidebarComponent } from './sidebar.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 export { NavbarComponent };
 export { SidebarComponent };

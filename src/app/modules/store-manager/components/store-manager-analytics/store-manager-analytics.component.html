@@ -1,0 +1,124 @@
+<div class="analytics-page">
+  <h2 class="page-title">Analytics Overview</h2>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading analytics...</p>
+    </div>
+  }
+
+  @if (!loading) {
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="card-icon" style="background:#edf2f7; color:#4a5568">
+          <i class="bi bi-bar-chart-fill"></i>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Total Redemptions</div>
+          <div class="card-value">{{ totalEvents }}</div>
+        </div>
+      </div>
+      @for (row of chartRows; track row.type) {
+        <div class="summary-card">
+          <div class="card-icon" [style.background]="row.color + '22'" [style.color]="row.color">
+            <i class="bi bi-{{ row.type === 'CAMPAIGN' ? 'megaphone' : row.type === 'COUPON' ? 'ticket-perforated' : 'percent' }}"></i>
+          </div>
+          <div class="card-body">
+            <div class="card-label">{{ row.label }} Redemptions</div>
+            <div class="card-value">{{ row.events }}</div>
+            <div class="card-sub">₹{{ row.amount | number: '1.2-2' }} discount given</div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Redemption Events Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h5>Redemption Events by Type</h5>
+        <span class="total-badge">{{ totalEvents }} total</span>
+      </div>
+      <div class="chart-body">
+        @for (row of chartRows; track row.type) {
+          <div class="bar-group">
+            <div class="bar-label">{{ row.label }}</div>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width.%]="eventPct(row.events)" [style.background]="row.color">
+                @if (row.events > 0) {
+                  <span class="bar-tip">{{ row.events }}</span>
+                }
+              </div>
+            </div>
+            <div class="bar-end">{{ row.events }}</div>
+          </div>
+        }
+        @if (totalEvents === 0) {
+          <div class="no-data">No redemption events recorded yet.</div>
+        }
+      </div>
+    </div>
+
+    <!-- Discount Amount Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h5>Total Discount Given by Type (₹)</h5>
+        <span class="total-badge">₹{{ totalAmount | number: '1.2-2' }} total</span>
+      </div>
+      <div class="chart-body">
+        @for (row of chartRows; track row.type) {
+          <div class="bar-group">
+            <div class="bar-label">{{ row.label }}</div>
+            <div class="bar-track">
+              <div class="bar-fill amount-bar" [style.width.%]="amountPct(row.amount)" [style.background]="row.color">
+                @if (row.amount > 0) {
+                  <span class="bar-tip">₹{{ row.amount | number: '1.0-0' }}</span>
+                }
+              </div>
+            </div>
+            <div class="bar-end">₹{{ row.amount | number: '1.2-2' }}</div>
+          </div>
+        }
+        @if (totalAmount === 0) {
+          <div class="no-data">No discount amounts recorded yet.</div>
+        }
+      </div>
+    </div>
+
+    <!-- Breakdown Table -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h5>Detailed Breakdown</h5>
+      </div>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Redemptions</th>
+            <th>Total Discount Given</th>
+            <th>Avg Discount / Event</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of chartRows; track row.type) {
+            <tr>
+              <td>
+                <span class="type-badge" [style.background]="row.color">{{ row.label }}</span>
+              </td>
+              <td>{{ row.events }}</td>
+              <td>₹{{ row.amount | number: '1.2-2' }}</td>
+              <td>{{ row.events > 0 ? '₹' + (row.amount / row.events | number: '1.2-2') : '—' }}</td>
+            </tr>
+          }
+          <tr class="total-row">
+            <td><strong>Total</strong></td>
+            <td><strong>{{ totalEvents }}</strong></td>
+            <td><strong>₹{{ totalAmount | number: '1.2-2' }}</strong></td>
+            <td><strong>{{ totalEvents > 0 ? '₹' + (totalAmount / totalEvents | number: '1.2-2') : '—' }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

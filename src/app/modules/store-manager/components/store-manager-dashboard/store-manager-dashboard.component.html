@@ -1,0 +1,111 @@
+<div class="dashboard">
+  <h2 class="page-title">Store Manager Dashboard</h2>
+
+  <!-- Analytics Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/store-manager/analytics">
+        <div class="stat-icon campaigns-icon">
+          <i class="bi bi-megaphone"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Campaign Redemptions</div>
+          <div class="stat-value">{{ getSummaryFor('CAMPAIGN')?.totalEvents || 0 }}</div>
+          <div class="stat-sub">₹{{ (getSummaryFor('CAMPAIGN')?.totalAmount || 0) | number: '1.2-2' }} discount given</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/store-manager/analytics">
+        <div class="stat-icon coupons-icon">
+          <i class="bi bi-ticket-perforated"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Coupon Redemptions</div>
+          <div class="stat-value">{{ getSummaryFor('COUPON')?.totalEvents || 0 }}</div>
+          <div class="stat-sub">₹{{ (getSummaryFor('COUPON')?.totalAmount || 0) | number: '1.2-2' }} discount given</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/store-manager/analytics">
+        <div class="stat-icon revenue-icon">
+          <i class="bi bi-percent"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Promotion Redemptions</div>
+          <div class="stat-value">{{ getSummaryFor('PROMOTION')?.totalEvents || 0 }}</div>
+          <div class="stat-sub">₹{{ (getSummaryFor('PROMOTION')?.totalAmount || 0) | number: '1.2-2' }} discount given</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 d-flex">
+      <div class="stat-card clickable" routerLink="/store-manager/approvals">
+        <div class="stat-icon pending-icon">
+          <i class="bi bi-clock-history"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Pending Approvals</div>
+          <div class="stat-value">{{ totalPendingApprovals }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Recent Notifications</h5>
+        </div>
+        <div class="card-body">
+          <div class="notifications-list">
+            @for (notif of notifications; track notif.notificationId) {
+              <div class="notification-item" [ngClass]="{'unread': notif.status === 'UNREAD'}">
+                <div class="notif-icon">
+                  <i class="bi bi-bell"></i>
+                </div>
+                <div class="notif-content">
+                  <p class="mb-0">{{ notif.message }}</p>
+                  <small class="text-muted">{{ notif.category }} • {{ notif.createdAt | date: 'short' }}</small>
+                </div>
+              </div>
+            }
+            @if (notifications.length === 0) {
+              <div class="text-center text-muted py-4">
+                No notifications
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Approval Summary</h5>
+        </div>
+        <div class="card-body">
+          <div class="stat-row">
+            <span>Pending Promotions</span>
+            <span class="badge bg-warning">{{ pendingPromotions }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Pending Campaigns</span>
+            <span class="badge bg-warning">{{ pendingCampaigns }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Pending Coupons</span>
+            <span class="badge bg-warning">{{ pendingCoupons }}</span>
+          </div>
+          <div class="mt-3">
+            <a routerLink="/store-manager/approvals" class="btn btn-primary w-100">
+              <i class="bi bi-check2-circle me-2"></i>Go to Approvals
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
