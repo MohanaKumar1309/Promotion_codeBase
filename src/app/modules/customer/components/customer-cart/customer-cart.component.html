@@ -66,43 +66,99 @@
 
     @if (cartItems.length > 0) {
       <div class="col-lg-4">
+
+        <!-- Zomato-style Available Offers -->
+        @if (activeCoupons.length > 0) {
+          <div class="card offers-card mb-3">
+            <div class="card-body p-0">
+              <div class="offers-header">
+                <i class="bi bi-tag-fill"></i>
+                <span>Available Offers</span>
+                <small class="ms-auto text-muted">{{ activeCoupons.length }} offer{{ activeCoupons.length > 1 ? 's' : '' }}</small>
+              </div>
+              <div class="offers-list">
+                @for (coupon of activeCoupons; track coupon.couponId) {
+                  <div class="offer-chip" [class.offer-applied]="appliedCoupon?.couponId === coupon.couponId">
+                    <div class="offer-left-bar"></div>
+                    <div class="offer-body">
+                      <div class="offer-top">
+                        <span class="offer-code">{{ coupon.couponCode }}</span>
+                        @if (appliedCoupon?.couponId === coupon.couponId) {
+                          <span class="offer-applied-badge"><i class="bi bi-check-circle-fill"></i> Applied</span>
+                        }
+                      </div>
+                      <div class="offer-desc">
+                        Save {{ coupon.amount }}{{ coupon.discountType === 'PERCENTAGE' ? '%' : '₹' }}
+                        @if (coupon.discountType === 'PERCENTAGE' && coupon.maxDiscount) {
+                          <span> up to ₹{{ coupon.maxDiscount }}</span>
+                        }
+                        on orders above ₹{{ coupon.minCartValue }}
+                      </div>
+                      @if (coupon.usageLimit) {
+                        <div class="offer-uses">{{ coupon.usageLimit - coupon.usageCount }} uses left</div>
+                      }
+                    </div>
+                    <button
+                      class="offer-apply-btn"
+                      (click)="applyCouponFromList(coupon)"
+                      [disabled]="!!appliedCoupon">
+                      @if (appliedCoupon?.couponId === coupon.couponId) {
+                        <i class="bi bi-x"></i>
+                      } @else {
+                        Apply
+                      }
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Order Summary -->
         <div class="card">
           <div class="card-header">
             <h5 class="card-title">Order Summary</h5>
           </div>
           <div class="card-body">
-            <!-- Coupon Code -->
+            <!-- Coupon Code Input -->
             <div class="coupon-section mb-3">
-              <label class="form-label">Have a coupon code?</label>
+              <label class="form-label">Enter coupon code</label>
               <div class="input-group">
                 <input
                   type="text"
                   class="form-control"
                   [(ngModel)]="couponCode"
-                  placeholder="Enter coupon code"
+                  placeholder="Coupon code"
                   [disabled]="!!appliedCoupon">
-                <button
-                  class="btn btn-outline-primary"
-                  (click)="onApplyCoupon()"
-                  [disabled]="!couponCode || !!appliedCoupon">
-                  Apply
-                </button>
+                @if (!appliedCoupon) {
+                  <button
+                    class="btn btn-outline-primary"
+                    (click)="onApplyCoupon()"
+                    [disabled]="!couponCode">
+                    Apply
+                  </button>
+                } @else {
+                  <button class="btn btn-outline-danger" (click)="removeCoupon()">
+                    Remove
+                  </button>
+                }
               </div>
               @if (couponError) {
-                <div class="text-danger small mt-1">{{ couponError }}</div>
+                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle"></i> {{ couponError }}</div>
               }
             </div>
 
             <!-- Applied Coupon -->
             @if (appliedCoupon) {
               <div class="applied-coupon mb-3">
-                <i class="bi bi-check-circle text-success"></i>
-                <span class="ms-1">{{ appliedCoupon.couponCode }} applied</span>
-                <button (click)="removeCoupon()" class="btn-remove">Remove</button>
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <span class="ms-1 fw-semibold">{{ appliedCoupon.couponCode }}</span> applied
+                <span class="ms-1 text-success small">(-₹{{ couponDiscount | number: '1.2-2' }})</span>
               </div>
             }
 
-            <!-- Summary -->
+            <!-- Summary Rows -->
             <div class="summary">
               <div class="summary-row">
                 <span>Subtotal</span>
@@ -133,7 +189,7 @@
             </div>
 
             @if (savingsMessage) {
-              <div class="alert alert-success mt-2">
+              <div class="alert alert-success mt-2 py-2">
                 <i class="bi bi-gift"></i> {{ savingsMessage }}
               </div>
             }

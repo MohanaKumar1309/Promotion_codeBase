@@ -1,6 +1,17 @@
 <div class="categories-page">
   <h2 class="page-title">Manage Categories</h2>
 
+  @if (successMessage) {
+    <div class="alert alert-success alert-dismissible">
+      <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
+    </div>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+    </div>
+  }
+
   <div class="row">
     <div class="col-lg-4">
       <div class="card">
@@ -18,19 +29,10 @@
                 formControlName="categoryName"
                 placeholder="Enter category name"
                 [class.is-invalid]="categoryForm.get('categoryName')?.invalid && (categoryForm.get('categoryName')?.dirty || categoryForm.get('categoryName')?.touched)">
+              @if (categoryForm.get('categoryName')?.invalid && (categoryForm.get('categoryName')?.dirty || categoryForm.get('categoryName')?.touched)) {
+                <div class="invalid-feedback">Category name is required.</div>
+              }
             </div>
-
-            @if (successMessage) {
-              <div class="alert alert-success">
-                {{ successMessage }}
-              </div>
-            }
-
-            @if (errorMessage) {
-              <div class="alert alert-danger">
-                {{ errorMessage }}
-              </div>
-            }
 
             <button
               type="submit"

@@ -1,53 +1,61 @@
 <div class="shop-page">
-  <div class="shop-header">
-    <div class="header-content">
-      <h1>PromoEngineX Shop</h1>
-      <p>Discover amazing products with exclusive offers</p>
-      <div class="header-actions">
-        <input
-          type="text"
-          class="search-box"
-          [(ngModel)]="searchTerm"
-          (keyup)="onSearch()"
-          placeholder="Search products...">
-        <a routerLink="/customer/cart" class="cart-link">
-          <i class="bi bi-cart"></i>
-          @if (cartCount > 0) {
-            <span>{{ cartCount }}</span>
-          }
-        </a>
-      </div>
-    </div>
-  </div>
 
-  <!-- Active Coupons Banner -->
-  @if (coupons.length > 0) {
-    <div class="coupons-banner">
-      <div class="coupons-scroll">
-        @for (coupon of coupons; track coupon.couponId) {
-          <div class="coupon-card">
-            <div class="coupon-code">{{ coupon.couponCode }}</div>
-            <div class="coupon-discount">{{ coupon.amount }}{{ coupon.discountType === 'PERCENTAGE' ? '%' : '₹' }} OFF</div>
-            <div class="coupon-min">Min: ₹{{ coupon.minCartValue }}</div>
-            <div class="coupon-usage">{{ coupon.usageLimit - coupon.usageCount }} left</div>
+  <!-- Campaign Carousel (Amazon-style banners) -->
+  @if (campaigns.length > 0) {
+    <div class="campaign-carousel">
+      <button class="carousel-arrow carousel-prev" (click)="prevCampaign()">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <div class="carousel-track">
+        @for (campaign of campaigns; track campaign.campaignId; let i = $index) {
+          <div class="carousel-slide" [class.active]="i === currentCampaignIndex">
+            <div class="carousel-banner campaign-color-{{ i % 5 }}">
+              <div class="banner-content">
+                <div class="banner-tag"><i class="bi bi-megaphone-fill"></i> Active Campaign</div>
+                <h2 class="banner-title">{{ campaign.campaignName }}</h2>
+                <div class="banner-offer">{{ getCampaignDiscountLabel(campaign) }}</div>
+                <p class="banner-age">For age {{ campaign.minAge }}–{{ campaign.maxAge }} · Limited time offer</p>
+              </div>
+              <div class="banner-decoration">
+                <i class="bi bi-gift-fill"></i>
+              </div>
+            </div>
           </div>
         }
       </div>
+
+      <button class="carousel-arrow carousel-next" (click)="nextCampaign()">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      <!-- Dots -->
+      @if (campaigns.length > 1) {
+        <div class="carousel-dots">
+          @for (campaign of campaigns; track campaign.campaignId; let i = $index) {
+            <button
+              class="dot"
+              [class.active]="i === currentCampaignIndex"
+              (click)="goToCampaign(i)">
+            </button>
+          }
+        </div>
+      }
     </div>
   }
 
-  <!-- Active Campaigns Banner -->
-  @if (campaigns.length > 0) {
-    <div class="campaigns-banner">
-      <div class="banner-label"><i class="bi bi-megaphone-fill"></i> Active Campaigns for You</div>
-      <div class="campaigns-scroll">
-        @for (campaign of campaigns; track campaign.campaignId) {
-          <div class="campaign-card">
-            <div class="campaign-name">{{ campaign.campaignName }}</div>
-            <div class="campaign-discount">
-              {{ campaign.discountType === 'BOGO' ? 'Buy 1 Get 1' : campaign.amount + (campaign.discountType === 'PERCENTAGE' ? '%' : '₹') + ' OFF' }}
-            </div>
-            <div class="campaign-age"><i class="bi bi-person"></i> Age {{ campaign.minAge }}–{{ campaign.maxAge }}</div>
+  <!-- Active Coupons Strip -->
+  @if (coupons.length > 0) {
+    <div class="coupons-strip">
+      <div class="strip-label"><i class="bi bi-tag-fill"></i> Available Offers</div>
+      <div class="coupons-scroll">
+        @for (coupon of coupons; track coupon.couponId) {
+          <div class="coupon-pill">
+            <span class="coupon-code">{{ coupon.couponCode }}</span>
+            <span class="coupon-sep">·</span>
+            <span class="coupon-val">{{ coupon.amount }}{{ coupon.discountType === 'PERCENTAGE' ? '%' : '₹' }} OFF</span>
+            <span class="coupon-sep">·</span>
+            <span class="coupon-min">Min ₹{{ coupon.minCartValue }}</span>
           </div>
         }
       </div>

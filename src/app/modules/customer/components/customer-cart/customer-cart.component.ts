@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule, Router } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { CheckoutService, CouponService, PromotionService, CampaignService } from "../../../../shared/services";
+import { CheckoutService, CouponService, PromotionService, CampaignService, ShopSearchService } from "../../../../shared/services";
 import { CartItem, Coupon, Promotion, Campaign } from "../../../../shared/models";
 
 @Component({
@@ -33,6 +33,7 @@ export class CustomerCartComponent implements OnInit {
     private couponService: CouponService,
     private promotionService: PromotionService,
     private campaignService: CampaignService,
+    private shopSearchService: ShopSearchService,
     private router: Router
   ) {}
 
@@ -184,8 +185,18 @@ export class CustomerCartComponent implements OnInit {
     this.calculateTotals();
   }
 
+  applyCouponFromList(coupon: Coupon): void {
+    if (this.appliedCoupon?.couponId === coupon.couponId) {
+      this.removeCoupon();
+      return;
+    }
+    this.couponCode = coupon.couponCode;
+    this.onApplyCoupon();
+  }
+
   saveCart(): void {
     localStorage.setItem("cart", JSON.stringify({ items: this.cartItems }));
+    this.shopSearchService.refreshCartCount();
   }
 
   onCheckout(): void {

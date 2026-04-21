@@ -1,26 +1,36 @@
-import { Component, OnInit, HostListener } from "@angular/core";
+import { Component, OnInit, OnDestroy, HostListener } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { AuthService, NotificationService } from "../../services";
+import { FormsModule } from "@angular/forms";
+import { Subscription } from "rxjs";
+import { AuthService, NotificationService, ShopSearchService } from "../../services";
 import { Notification } from "../../models";
 
 @Component({
   selector: "app-navbar",
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: "./navbar.component.html",
   styleUrl: "./navbar.component.css"
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   userName: string = "";
   userRole: string = "";
   notifications: Notification[] = [];
   showNotifications: boolean = false;
+  customerSearchTerm: string = "";
+  cartCount: number = 0;
+
+  private cartSub!: Subscription;
 
   private readonly internalRoles = ['STORE_MANAGER', 'MERCHANDISER', 'MARKETING_MANAGER', 'ADMIN'];
 
   get isInternalUser(): boolean {
     return this.internalRoles.includes(this.userRole);
+  }
+
+  get isCustomer(): boolean {
+    return this.userRole === 'CUSTOMER';
   }
 
   get unreadCount(): number {
@@ -30,15 +40,32 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private shopSearchService: ShopSearchService
   ) {}
 
   ngOnInit(): void {
     this.userName = localStorage.getItem('name') || 'Guest';
     this.userRole = localStorage.getItem('role') || '';
+
     if (this.isInternalUser) {
       this.loadNotifications();
     }
+
+    if (this.isCustomer) {
+      this.shopSearchService.refreshCartCount();
+      this.cartSub = this.shopSearchService.cartCount$.subscribe(count => {
+        this.cartCount = count;
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.cartSub?.unsubscribe();
+  }
+
+  onSearchInput(): void {
+    this.shopSearchService.setSearchTerm(this.customerSearchTerm);
   }
 
   loadNotifications(): void {

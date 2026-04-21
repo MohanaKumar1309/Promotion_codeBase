@@ -1,18 +1,18 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { FormsModule } from "@angular/forms";
-import { CatalogService, CouponService, CampaignService, PromotionService } from "../../../../shared/services";
+import { Subscription } from "rxjs";
+import { CatalogService, CouponService, CampaignService, PromotionService, ShopSearchService } from "../../../../shared/services";
 import { Product, Coupon, Campaign, Category, Promotion } from "../../../../shared/models";
 
 @Component({
   selector: "app-customer-shop",
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: "./customer-shop.component.html",
   styleUrl: "./customer-shop.component.css"
 })
-export class CustomerShopComponent implements OnInit {
+export class CustomerShopComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   categories: Category[] = [];
   coupons: Coupon[] = [];
@@ -21,13 +21,19 @@ export class CustomerShopComponent implements OnInit {
   filteredProducts: Product[] = [];
   selectedCategoryId: number | null = null;
   searchTerm: string = "";
-  cartCount: number = 0;
+
+  // Campaign carousel
+  currentCampaignIndex: number = 0;
+  private carouselTimer: any;
+
+  private searchSub!: Subscription;
 
   constructor(
     private catalogService: CatalogService,
     private couponService: CouponService,
     private campaignService: CampaignService,
-    private promotionService: PromotionService
+    private promotionService: PromotionService,
+    private shopSearchService: ShopSearchService
   ) {}
 
   ngOnInit(): void {
@@ -36,53 +42,100 @@ export class CustomerShopComponent implements OnInit {
     this.loadCoupons();
     this.loadCampaigns();
     this.loadActivePromotions();
-    this.updateCartCount();
+    this.shopSearchService.refreshCartCount();
+
+    this.searchSub = this.shopSearchService.searchTerm$.subscribe(term => {
+      this.searchTerm = term;
+      this.applyFilters();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
+    this.stopCarousel();
   }
 
   loadProducts(): void {
     this.catalogService.getProducts().subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.products = response.data || [];
         this.filteredProducts = this.products;
       },
-      error: (err) => console.error("Failed to load products", err)
+      error: (err: any) => console.error("Failed to load products", err)
     });
   }
 
   loadCategories(): void {
     this.catalogService.getCategories().subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.categories = response.data || [];
       },
-      error: (err) => console.error("Failed to load categories", err)
+      error: (err: any) => console.error("Failed to load categories", err)
     });
   }
 
   loadCoupons(): void {
     this.couponService.getActiveCoupons().subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.coupons = response.data || [];
       },
-      error: (err) => console.error("Failed to load coupons", err)
+      error: (err: any) => console.error("Failed to load coupons", err)
     });
   }
 
   loadCampaigns(): void {
     const age = parseInt(localStorage.getItem('age') || '25', 10);
     this.campaignService.getActiveCampaigns(age).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.campaigns = response.data || [];
+        if (this.campaigns.length > 1) {
+          this.startCarousel();
+        }
       },
-      error: (err) => console.error("Failed to load campaigns", err)
+      error: (err: any) => console.error("Failed to load campaigns", err)
     });
   }
 
   loadActivePromotions(): void {
     this.promotionService.getActivePromotions().subscribe({
-      next: (res) => { this.activePromotions = res.data || []; },
+      next: (res: any) => { this.activePromotions = res.data || []; },
       error: () => {}
     });
   }
+
+  // ── Carousel ──────────────────────────────────────────
+
+  startCarousel(): void {
+    this.carouselTimer = setInterval(() => {
+      this.currentCampaignIndex = (this.currentCampaignIndex + 1) % this.campaigns.length;
+    }, 4000);
+  }
+
+  stopCarousel(): void {
+    if (this.carouselTimer) {
+      clearInterval(this.carouselTimer);
+    }
+  }
+
+  prevCampaign(): void {
+    this.stopCarousel();
+    this.currentCampaignIndex = (this.currentCampaignIndex - 1 + this.campaigns.length) % this.campaigns.length;
+    this.startCarousel();
+  }
+
+  nextCampaign(): void {
+    this.stopCarousel();
+    this.currentCampaignIndex = (this.currentCampaignIndex + 1) % this.campaigns.length;
+    this.startCarousel();
+  }
+
+  goToCampaign(index: number): void {
+    this.stopCarousel();
+    this.currentCampaignIndex = index;
+    this.startCarousel();
+  }
+
+  // ── Filtering ─────────────────────────────────────────
 
   filterByCategory(categoryId: number | null): void {
     this.selectedCategoryId = categoryId;
@@ -97,9 +150,7 @@ export class CustomerShopComponent implements OnInit {
     });
   }
 
-  onSearch(): void {
-    this.applyFilters();
-  }
+  // ── Cart ──────────────────────────────────────────────
 
   isOutOfStock(product: Product): boolean {
     return product.stockQuantity !== undefined && product.stockQuantity !== null && product.stockQuantity <= 0;
@@ -117,20 +168,10 @@ export class CustomerShopComponent implements OnInit {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-    this.updateCartCount();
+    this.shopSearchService.refreshCartCount();
   }
 
-  updateCartCount(): void {
-    const cart = JSON.parse(localStorage.getItem("cart") || "{\"items\":[]}");
-    this.cartCount = cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
-  }
-
-  isInCampaign(product: Product): boolean {
-    return this.campaigns.some(campaign =>
-      (campaign.productIds || []).includes(product.productId) ||
-      (campaign.categoryIds || []).includes(product.categoryId)
-    );
-  }
+  // ── Promotions / Campaigns ────────────────────────────
 
   getCampaignForProduct(product: Product): Campaign | undefined {
     return this.campaigns.find(campaign =>
@@ -147,7 +188,6 @@ export class CustomerShopComponent implements OnInit {
   }
 
   getDiscountedPrice(product: Product): number | null {
-    // Promotion-level discount (per-product)
     const promo = this.getPromotionForProduct(product);
     if (promo) {
       if (promo.discountType === 'FLAT') return Math.max(0, product.price - promo.discountValue);
@@ -161,7 +201,13 @@ export class CustomerShopComponent implements OnInit {
     const campaign = this.getCampaignForProduct(product);
     if (!campaign) return null;
     if (campaign.discountType === 'BOGO') return 'Buy 1 Get 1';
-    const sign = campaign.discountType === 'PERCENTAGE' ? '%' : '$';
+    const sign = campaign.discountType === 'PERCENTAGE' ? '%' : '₹';
+    return `${campaign.amount}${sign} OFF`;
+  }
+
+  getCampaignDiscountLabel(campaign: Campaign): string {
+    if (campaign.discountType === 'BOGO') return 'Buy 1 Get 1 FREE';
+    const sign = campaign.discountType === 'PERCENTAGE' ? '%' : '₹';
     return `${campaign.amount}${sign} OFF`;
   }
 }

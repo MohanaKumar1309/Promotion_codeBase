@@ -4,7 +4,33 @@
       <i class="bi bi-lightning-fill"></i>
       <span>PromoEngineX</span>
     </div>
+
+    <!-- Customer: search bar in center -->
+    @if (isCustomer) {
+      <div class="navbar-search">
+        <div class="search-wrapper">
+          <i class="bi bi-search search-icon"></i>
+          <input
+            type="text"
+            class="navbar-search-input"
+            [(ngModel)]="customerSearchTerm"
+            (input)="onSearchInput()"
+            placeholder="Search products...">
+        </div>
+      </div>
+    }
+
     <div class="navbar-right">
+      <!-- Cart icon (customer only) -->
+      @if (isCustomer) {
+        <a routerLink="/customer/cart" class="cart-btn">
+          <i class="bi bi-cart3"></i>
+          @if (cartCount > 0) {
+            <span class="cart-badge">{{ cartCount }}</span>
+          }
+        </a>
+      }
+
       <!-- Notification Bell (internal users only) -->
       @if (isInternalUser) {
         <div class="notification-bell">
@@ -51,6 +77,12 @@
         </div>
       }
 
+      <div class="user-info">
+        <span class="user-name">{{ userName }}</span>
+        <button class="btn-logout" (click)="onLogout()">
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </div>
     </div>
   </div>
 </nav>
