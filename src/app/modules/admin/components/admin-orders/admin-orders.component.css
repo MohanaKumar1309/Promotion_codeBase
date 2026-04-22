@@ -1,0 +1,7 @@
+.orders-page { padding: 0; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.header-stats { display: flex; gap: 12px; }
+.stat-chip { display: flex; align-items: center; gap: 6px; background: var(--bs-tertiary-bg); border: 1px solid var(--bs-border-color); padding: 6px 14px; border-radius: 20px; font-size: 0.88rem; font-weight: 600; color: var(--bs-body-color); }
+.stat-chip.revenue { border-color: #238636; color: #3fb950; background: rgba(35,134,54,0.1); }
+.order-id { font-family: monospace; font-weight: 600; }
+.customer-cell { display: flex; flex-direction: column; gap: 2px; }

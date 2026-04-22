@@ -3,6 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, AuditLog } from '../models';
 
+export interface PagedData<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,7 +21,7 @@ export class AuditLogService {
 
   constructor(private http: HttpClient) {}
 
-  getAuditLogs(): Observable<ApiResponse<AuditLog[]>> {
-    return this.http.get<ApiResponse<AuditLog[]>>(this.apiUrl);
+  getAuditLogsPaged(page: number = 0, size: number = 25): Observable<ApiResponse<PagedData<AuditLog>>> {
+    return this.http.get<ApiResponse<PagedData<AuditLog>>>(`${this.apiUrl}?page=${page}&size=${size}`);
   }
 }

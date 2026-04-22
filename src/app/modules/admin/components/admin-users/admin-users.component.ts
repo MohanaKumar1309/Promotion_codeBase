@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UserService, CatalogService } from '../../../../shared/services';
 import { User, CreateUserRequest } from '../../../../shared/models';
@@ -7,7 +8,7 @@ import { User, CreateUserRequest } from '../../../../shared/models';
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-users.component.css'
 })
@@ -17,6 +18,16 @@ export class AdminUsersComponent implements OnInit {
   loading: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
+  userSearch: string = '';
+  roleFilter: string = '';
+
+  get filteredUsers(): User[] {
+    const term = this.userSearch.toLowerCase().trim();
+    return this.users.filter(u =>
+      (!term || u.name.toLowerCase().includes(term) || u.email.toLowerCase().includes(term)) &&
+      (!this.roleFilter || u.role === this.roleFilter)
+    );
+  }
 
   constructor(
     private fb: FormBuilder,

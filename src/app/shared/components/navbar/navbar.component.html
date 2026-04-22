@@ -77,6 +77,11 @@
         </div>
       }
 
+      <!-- Theme toggle -->
+      <button class="btn-theme-toggle" (click)="themeService.toggle()" [title]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+        <i class="bi" [class.bi-sun-fill]="themeService.isDark" [class.bi-moon-fill]="!themeService.isDark"></i>
+      </button>
+
       <div class="user-info">
         <span class="user-name">{{ userName }}</span>
         <button class="btn-logout" (click)="onLogout()">

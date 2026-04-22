@@ -3,7 +3,7 @@ import { Router, RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Subscription } from "rxjs";
-import { AuthService, NotificationService, ShopSearchService } from "../../services";
+import { AuthService, NotificationService, ShopSearchService, ThemeService } from "../../services";
 import { Notification } from "../../models";
 
 @Component({
@@ -41,7 +41,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private notificationService: NotificationService,
-    private shopSearchService: ShopSearchService
+    private shopSearchService: ShopSearchService,
+    public themeService: ThemeService
   ) {}
 
   ngOnInit(): void {

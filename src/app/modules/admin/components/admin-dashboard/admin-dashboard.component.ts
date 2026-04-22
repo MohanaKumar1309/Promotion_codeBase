@@ -37,8 +37,8 @@ export class AdminDashboardComponent implements OnInit {
       next: (r) => { this.stats.totalProducts = r.data?.length || 0; },
       error: () => {}
     });
-    this.auditLogService.getAuditLogs().subscribe({
-      next: (r) => { this.stats.totalLogs = r.data?.length || 0; },
+    this.auditLogService.getAuditLogsPaged(0, 1).subscribe({
+      next: (r) => { this.stats.totalLogs = r.data?.totalElements || 0; },
       error: () => {}
     });
   }

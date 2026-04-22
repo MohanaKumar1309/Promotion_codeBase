@@ -9,3 +9,4 @@ export * from './analytics.service';
 export * from './audit-log.service';
 export * from './checkout.service';
 export * from './shop-search.service';
+export * from './theme.service';

@@ -1,8 +1,8 @@
 .navbar {
-  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-  color: white;
-  padding: 10px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  background: var(--bs-card-bg);
+  border-bottom: 1px solid var(--bs-border-color);
+  color: var(--bs-body-color);
+  padding: 0;
   position: fixed;
   top: 0;
   left: 0;
@@ -11,6 +11,12 @@
   height: 56px;
   display: flex;
   align-items: center;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+}
+
+/* Ensure solid background in light mode when scrolling over page content */
+:host-context([data-bs-theme="light"]) .navbar {
+  background: #ffffff;
 }
 
 .navbar-container {
@@ -25,13 +31,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 700;
+  color: var(--bs-body-color);
 }
 
-.navbar-brand i {
-  font-size: 1.5rem;
-}
+.navbar-brand i { font-size: 1.4rem; color: #ffc107; }
 
 /* Customer search bar */
 .navbar-search {
@@ -49,7 +54,7 @@
 .search-icon {
   position: absolute;
   left: 12px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--bs-secondary-color);
   font-size: 0.9rem;
   pointer-events: none;
 }
@@ -57,44 +62,35 @@
 .navbar-search-input {
   width: 100%;
   padding: 7px 14px 7px 34px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
   border-radius: 20px;
-  color: white;
+  color: var(--bs-body-color);
   font-size: 0.9rem;
   outline: none;
-  transition: background 0.2s, border-color 0.2s;
+  transition: border-color 0.2s;
 }
 
-.navbar-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.navbar-search-input:focus {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.5);
-}
+.navbar-search-input::placeholder { color: var(--bs-secondary-color); }
+.navbar-search-input:focus { border-color: #ffc107; }
 
 /* Cart icon */
 .cart-btn {
   position: relative;
-  color: white;
+  color: var(--bs-secondary-color);
   font-size: 1.4rem;
   text-decoration: none;
   display: flex;
   align-items: center;
-  transition: opacity 0.2s;
+  transition: color 0.2s;
 }
-
-.cart-btn:hover {
-  color: #ffc107;
-}
+.cart-btn:hover { color: #ffc107; }
 
 .cart-badge {
   position: absolute;
   top: -6px;
   right: -8px;
-  background: #ff4757;
+  background: #da3633;
   color: white;
   border-radius: 50%;
   min-width: 18px;
@@ -108,201 +104,143 @@
 }
 
 /* User info */
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.user-info { display: flex; align-items: center; gap: 10px; }
 
 .user-name {
   font-size: 0.88rem;
-  opacity: 0.9;
+  color: var(--bs-secondary-color);
   font-weight: 500;
 }
 
 .btn-logout {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-secondary-color);
+  border: 1px solid var(--bs-border-color);
   border-radius: 6px;
   padding: 5px 10px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
+.btn-logout:hover { color: #da3633; border-color: #da3633; background: transparent; }
 
-.btn-logout:hover {
-  background: rgba(255, 255, 255, 0.28);
-}
-
-.navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-
-.notification-bell {
-  position: relative;
-}
-
-.btn-notif {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
+/* Theme toggle button */
+.btn-theme-toggle {
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-secondary-color);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  position: relative;
-  transition: background 0.2s;
+  font-size: 1rem;
+  transition: all 0.2s;
 }
+.btn-theme-toggle:hover { color: #ffc107; border-color: #ffc107; background: transparent; }
 
-.btn-notif:hover {
-  background: rgba(255, 255, 255, 0.35);
-}
+.navbar-right { display: flex; align-items: center; gap: 12px; }
 
-.notif-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #e74c3c;
-  color: white;
+/* Notification bell */
+.notification-bell { position: relative; }
+
+.btn-notif {
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-secondary-color);
+  border: 1px solid var(--bs-border-color);
   border-radius: 50%;
-  font-size: 0.65rem;
-  min-width: 16px;
-  height: 16px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-notif:hover { color: var(--bs-body-color); background: var(--bs-secondary-bg); }
+
+.notif-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  background: #da3633;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  min-width: 16px; height: 16px;
+  display: flex; align-items: center; justify-content: center;
   padding: 0 3px;
 }
 
 .notif-dropdown {
   position: absolute;
-  right: 0;
-  top: 48px;
+  right: 0; top: 46px;
   width: 320px;
-  background: white;
-  color: #333;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  background: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   z-index: 1000;
   max-height: 400px;
   overflow-y: auto;
+  color: var(--bs-body-color);
 }
 
 .notif-header {
   padding: 12px 16px;
   font-weight: 600;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--bs-border-color);
   font-size: 0.9rem;
-  color: #555;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .unread-count {
   font-size: 0.75rem;
-  background: #4a5568;
-  color: white;
+  background: #ffc107;
+  color: #0d1117;
   padding: 2px 8px;
   border-radius: 10px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .notif-item {
   padding: 10px 16px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--bs-border-color);
   display: flex;
   align-items: flex-start;
   gap: 10px;
   transition: background 0.15s;
 }
+.notif-item:hover { background: var(--bs-tertiary-bg); }
+.notif-item.unread { border-left: 3px solid #ffc107; }
 
-.notif-item:hover {
-  background: #f9f9f9;
-}
-
-.notif-item.unread {
-  background: #f7fafc;
-  border-left: 3px solid #4a5568;
-}
-
-.notif-item.unread:hover {
-  background: #edf2f7;
-}
-
-.notif-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.notif-msg {
-  font-size: 0.85rem;
-  margin-bottom: 4px;
-  line-height: 1.4;
-}
-
-.notif-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  color: #888;
-}
-
-.notif-time {
-  margin-left: auto;
-}
+.notif-body { flex: 1; min-width: 0; }
+.notif-msg { font-size: 0.85rem; margin-bottom: 4px; line-height: 1.4; }
+.notif-meta { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--bs-secondary-color); }
+.notif-time { margin-left: auto; }
 
 .btn-mark-read {
   flex-shrink: 0;
-  background: #4a5568;
-  color: white;
-  border: none;
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-secondary-color);
+  border: 1px solid var(--bs-border-color);
   padding: 4px 10px;
   border-radius: 5px;
   font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.2s;
+  transition: all 0.2s;
   margin-top: 2px;
 }
+.btn-mark-read:hover { background: var(--bs-secondary-bg); color: var(--bs-body-color); }
 
-.btn-mark-read:hover {
-  background: #2d3748;
-}
-
-.notif-empty {
-  padding: 20px 16px;
-  text-align: center;
-  color: #aaa;
-  font-size: 0.85rem;
-}
+.notif-empty { padding: 20px 16px; text-align: center; color: var(--bs-secondary-color); font-size: 0.85rem; }
 
 @media (max-width: 768px) {
-  .navbar-container {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .navbar-right {
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .btn-logout {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .user-info {
-    font-size: 0.85rem;
-  }
+  .navbar-container { flex-direction: column; gap: 10px; }
+  .navbar-right { flex-direction: column; gap: 8px; width: 100%; }
+  .btn-logout { width: 100%; justify-content: center; }
 }

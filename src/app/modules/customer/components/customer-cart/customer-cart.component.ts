@@ -28,6 +28,13 @@ export class CustomerCartComponent implements OnInit {
   savingsMessage: string = "";
   loading: boolean = false;
 
+  // Payment modal
+  showPaymentModal: boolean = false;
+  selectedPaymentMethod: string = 'COD';
+
+  // Order success popup
+  showOrderSuccess: boolean = false;
+
   constructor(
     private checkoutService: CheckoutService,
     private couponService: CouponService,
@@ -117,7 +124,8 @@ export class CustomerCartComponent implements OnInit {
         }
       }
       if (!promoBase) continue;
-      if (promo.minQuantity && promoQty < promo.minQuantity) continue;
+      // BOGO ignores minQuantity — you just need at least 1 item to get 50% off
+      if (promo.discountType !== 'BOGO' && promo.minQuantity && promoQty < promo.minQuantity) continue;
       if (promo.discountType === 'FLAT') total += promo.discountValue;
       else if (promo.discountType === 'PERCENTAGE') total += promoBase * promo.discountValue / 100;
       else if (promo.discountType === 'BOGO') total += promoBase / 2;
@@ -171,7 +179,7 @@ export class CustomerCartComponent implements OnInit {
       return;
     }
     if (this.subtotal < found.minCartValue) {
-      this.couponError = `Minimum cart value $${found.minCartValue} required.`;
+      this.couponError = `Minimum cart value ₹${found.minCartValue} required.`;
       return;
     }
     this.appliedCoupon = found;
@@ -199,9 +207,21 @@ export class CustomerCartComponent implements OnInit {
     this.shopSearchService.refreshCartCount();
   }
 
+  // ── Payment Modal ──────────────────────────────────
+
   onCheckout(): void {
     if (this.cartItems.length === 0) return;
+    this.showPaymentModal = true;
+  }
+
+  closePaymentModal(): void {
+    this.showPaymentModal = false;
+  }
+
+  confirmPayment(): void {
     this.loading = true;
+    this.showPaymentModal = false;
+
     const request = {
       items: this.cartItems.map(item => ({
         productId: item.product.productId,
@@ -209,13 +229,18 @@ export class CustomerCartComponent implements OnInit {
       })),
       couponCode: this.appliedCoupon?.couponCode || undefined
     };
+
     this.checkoutService.checkout(request).subscribe({
       next: (response) => {
         this.loading = false;
         if (response.success) {
           localStorage.removeItem("cart");
-          alert("Order placed successfully!");
-          this.router.navigate(["/customer/shop"]);
+          this.shopSearchService.refreshCartCount();
+          this.showOrderSuccess = true;
+          setTimeout(() => {
+            this.showOrderSuccess = false;
+            this.router.navigate(["/customer/orders"]);
+          }, 2500);
         } else {
           alert(response.message || "Checkout failed.");
         }

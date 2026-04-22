@@ -35,9 +35,9 @@ export class MerchandiserPromotionsComponent implements OnInit {
       name: ["", Validators.required],
       description: [""],
       discountType: ["FLAT", Validators.required],
-      discountValue: [0, [Validators.required, Validators.min(0)]],
+      discountValue: [null, [Validators.required, Validators.min(0.01)]],
       type: ["PRODUCT", Validators.required],
-      minQuantity: [1],
+      minQuantity: [1, Validators.min(1)],
       startDate: ["", Validators.required],
       endDate: ["", Validators.required]
     });
@@ -65,9 +65,31 @@ export class MerchandiserPromotionsComponent implements OnInit {
     return this.promotionForm.get('type')?.value || 'PRODUCT';
   }
 
+  get isBOGO(): boolean {
+    return this.promotionForm.get('discountType')?.value === 'BOGO';
+  }
+
+  get today(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
   onTypeChange(): void {
     this.selectedProductIds = [];
     this.selectedCategoryIds = [];
+  }
+
+  onDiscountTypeChange(): void {
+    const dvCtrl = this.promotionForm.get('discountValue');
+    if (this.isBOGO) {
+      dvCtrl?.clearValidators();
+      dvCtrl?.setValue(0);
+      dvCtrl?.updateValueAndValidity();
+      this.promotionForm.patchValue({ minQuantity: 1 });
+    } else {
+      dvCtrl?.setValidators([Validators.required, Validators.min(0.01)]);
+      dvCtrl?.setValue(null);
+      dvCtrl?.updateValueAndValidity();
+    }
   }
 
   loadPromotions(): void {
@@ -105,8 +127,26 @@ export class MerchandiserPromotionsComponent implements OnInit {
   }
 
   onCreatePromotion(): void {
+    this.promotionForm.markAllAsTouched();
     if (!this.promotionForm.valid) {
-      this.errorMessage = "Please fill all required fields";
+      this.errorMessage = "Please fill all required fields correctly.";
+      setTimeout(() => (this.errorMessage = ""), 3000);
+      return;
+    }
+
+    const formVal = this.promotionForm.value;
+    if (formVal.startDate < this.today) {
+      this.errorMessage = "Start date cannot be in the past.";
+      setTimeout(() => (this.errorMessage = ""), 3000);
+      return;
+    }
+    if (formVal.endDate < formVal.startDate) {
+      this.errorMessage = "End date must be after start date.";
+      setTimeout(() => (this.errorMessage = ""), 3000);
+      return;
+    }
+    if (!this.isBOGO && formVal.discountValue <= 0) {
+      this.errorMessage = "Discount value must be greater than 0.";
       setTimeout(() => (this.errorMessage = ""), 3000);
       return;
     }
@@ -135,7 +175,10 @@ export class MerchandiserPromotionsComponent implements OnInit {
         this.loading = false;
         if (response.success) {
           this.successMessage = "Promotion created successfully!";
-          this.promotionForm.reset({ discountType: 'FLAT', type: 'PRODUCT', minQuantity: 1 });
+          this.promotionForm.reset({ discountType: 'FLAT', type: 'PRODUCT', minQuantity: 1, discountValue: null });
+          const dvCtrl = this.promotionForm.get('discountValue');
+          dvCtrl?.setValidators([Validators.required, Validators.min(0.01)]);
+          dvCtrl?.updateValueAndValidity();
           this.selectedProductIds = [];
           this.selectedCategoryIds = [];
           setTimeout(() => (this.successMessage = ""), 3000);

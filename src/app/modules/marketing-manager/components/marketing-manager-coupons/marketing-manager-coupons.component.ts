@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
@@ -17,7 +17,17 @@ export class MarketingManagerCouponsComponent implements OnInit {
   loading: boolean = false;
   successMessage: string = "";
   errorMessage: string = "";
+  couponStatusFilter: string = "";
   couponForm: any;
+
+  get today(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  get filteredCoupons(): Coupon[] {
+    if (!this.couponStatusFilter) return this.coupons;
+    return this.coupons.filter(c => c.status === this.couponStatusFilter);
+  }
 
   constructor(
     private couponService: CouponService,
@@ -28,10 +38,10 @@ export class MarketingManagerCouponsComponent implements OnInit {
       couponName: ["", Validators.required],
       description: ["", Validators.required],
       discountType: ["FLAT", Validators.required],
-      amount: [0, [Validators.required, Validators.min(0)]],
-      minCartValue: [0, Validators.required],
-      maxDiscount: [0],
-      usageLimit: [100, Validators.required],
+      amount: [null, [Validators.required, Validators.min(0.01)]],
+      minCartValue: [0, [Validators.required, Validators.min(0)]],
+      maxDiscount: [null, Validators.min(0)],
+      usageLimit: [100, [Validators.required, Validators.min(1)]],
       startDate: ["", Validators.required],
       endDate: ["", Validators.required]
     });
@@ -54,8 +64,8 @@ export class MarketingManagerCouponsComponent implements OnInit {
   }
 
   onCreateCoupon(): void {
+    this.couponForm.markAllAsTouched();
     if (!this.couponForm.valid) {
-      this.errorMessage = "Please fill all required fields";
       return;
     }
 
@@ -67,7 +77,7 @@ export class MarketingManagerCouponsComponent implements OnInit {
         this.loading = false;
         if (response.success) {
           this.successMessage = "Coupon created successfully!";
-          this.couponForm.reset();
+          this.couponForm.reset({ discountType: 'FLAT', minCartValue: 0, usageLimit: 100 });
           setTimeout(() => (this.successMessage = ""), 3000);
           this.loadCoupons();
         }

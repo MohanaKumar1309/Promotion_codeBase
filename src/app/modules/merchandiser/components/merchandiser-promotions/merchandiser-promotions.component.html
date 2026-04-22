@@ -4,173 +4,208 @@
     <p>Create and manage product promotions</p>
   </div>
 
-  <div class="row">
-    <div class="col-lg-5">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Create New Promotion</h5>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="promotionForm" (ngSubmit)="onCreatePromotion()">
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
 
-            <div class="form-group mb-3">
-              <label class="form-label">Promotion Name</label>
-              <input type="text" class="form-control" formControlName="name" placeholder="e.g., Summer Sale">
+  <!-- Create Promotion Form — full width -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">Create New Promotion</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="promotionForm" (ngSubmit)="onCreatePromotion()">
+        <div class="row g-3">
+
+          <!-- Row 1: Name, Description, Discount Type -->
+          <div class="col-md-4">
+            <label class="form-label">Promotion Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="name" placeholder="e.g., Summer Sale"
+              [class.is-invalid]="promotionForm.get('name')?.invalid && promotionForm.get('name')?.touched">
+            <div class="invalid-feedback">Promotion name is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Description</label>
+            <input type="text" class="form-control" formControlName="description" placeholder="Optional description">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Discount Type <span class="text-danger">*</span></label>
+            <select class="form-control" formControlName="discountType" (change)="onDiscountTypeChange()">
+              <option value="FLAT">Flat Amount (₹)</option>
+              <option value="PERCENTAGE">Percentage (%)</option>
+              <option value="BOGO">Buy One Get One (BOGO)</option>
+            </select>
+          </div>
+
+          <!-- Row 2: Discount Value, Min Qty (hidden for BOGO), Dates -->
+          @if (!isBOGO) {
+            <div class="col-md-3">
+              <label class="form-label">Discount Value <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" formControlName="discountValue" min="0.01" placeholder="0"
+                [class.is-invalid]="promotionForm.get('discountValue')?.invalid && promotionForm.get('discountValue')?.touched">
+              <div class="invalid-feedback">Enter a valid discount value.</div>
             </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">Description</label>
-              <textarea class="form-control" formControlName="description" rows="2" placeholder="Optional description"></textarea>
-            </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">Discount Type</label>
-              <select class="form-control" formControlName="discountType">
-                <option value="FLAT">Flat Amount ($)</option>
-                <option value="PERCENTAGE">Percentage (%)</option>
-                <option value="BOGO">Buy One Get One</option>
-              </select>
-            </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">Discount Value</label>
-              <input type="number" class="form-control" formControlName="discountValue" min="0" placeholder="0">
-            </div>
-
-            <div class="form-group mb-3">
+            <div class="col-md-3">
               <label class="form-label">Min Quantity</label>
-              <input type="number" class="form-control" formControlName="minQuantity" min="1" placeholder="1">
+              <input type="number" class="form-control" formControlName="minQuantity" min="1" placeholder="1"
+                [class.is-invalid]="promotionForm.get('minQuantity')?.invalid && promotionForm.get('minQuantity')?.touched">
+              <div class="invalid-feedback">Must be at least 1.</div>
             </div>
-
-            <div class="row">
-              <div class="col-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">Start Date</label>
-                  <input type="date" class="form-control" formControlName="startDate">
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">End Date</label>
-                  <input type="date" class="form-control" formControlName="endDate">
-                </div>
+          } @else {
+            <div class="col-md-6">
+              <div class="bogo-info-box">
+                <i class="bi bi-gift-fill"></i>
+                <strong>Buy One Get One Free</strong>
+                <span>Customer gets 2nd item free. No discount value needed.</span>
               </div>
             </div>
+          }
 
-            <!-- Promotion Type Dropdown -->
-            <div class="form-group mb-3">
-              <label class="form-label">Apply Promotion To</label>
-              <select class="form-control" formControlName="type" (change)="onTypeChange()">
-                <option value="PRODUCT">Specific Products</option>
-                <option value="CATEGORY">Specific Categories</option>
-              </select>
-            </div>
+          <div class="col-md-3">
+            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" formControlName="startDate" [min]="today"
+              [class.is-invalid]="promotionForm.get('startDate')?.invalid && promotionForm.get('startDate')?.touched">
+            <div class="invalid-feedback">Start date is required.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">End Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" formControlName="endDate" [min]="today"
+              [class.is-invalid]="promotionForm.get('endDate')?.invalid && promotionForm.get('endDate')?.touched">
+            <div class="invalid-feedback">End date is required.</div>
+          </div>
 
-            <!-- Product Selection (only when type = PRODUCT) -->
+          <!-- Row 3: Apply To -->
+          <div class="col-md-4">
+            <label class="form-label">Apply Promotion To</label>
+            <select class="form-control" formControlName="type" (change)="onTypeChange()">
+              <option value="PRODUCT">Specific Products</option>
+              <option value="CATEGORY">Specific Categories</option>
+            </select>
+          </div>
+
+          <!-- Product / Category checkboxes -->
+          <div class="col-md-8">
             @if (selectedType === 'PRODUCT') {
-              <div class="form-group mb-3">
-                <label class="form-label">Select Products</label>
-                <div class="checkbox-list border rounded p-2" style="max-height: 180px; overflow-y: auto;">
-                  @for (product of products; track product.productId) {
-                    <div class="checkbox-item">
-                      <input
-                        type="checkbox"
-                        [id]="'prod-' + product.productId"
-                        [checked]="selectedProductIds.includes(product.productId)"
-                        (change)="toggleProduct(product.productId)">
-                      <label [for]="'prod-' + product.productId" class="ms-2">
-                        {{ product.name }} <small class="text-muted">₹{{ product.price }}</small>
-                      </label>
-                    </div>
-                  }
-                  @if (products.length === 0) {
-                    <div class="text-muted small p-2">No products available</div>
-                  }
-                </div>
+              <label class="form-label">Select Products <span class="text-danger">*</span></label>
+              <div class="checkbox-list border rounded p-2" style="max-height: 140px; overflow-y: auto;">
+                @for (product of products; track product.productId) {
+                  <div class="checkbox-item">
+                    <input type="checkbox" [id]="'prod-' + product.productId"
+                      [checked]="selectedProductIds.includes(product.productId)"
+                      (change)="toggleProduct(product.productId)">
+                    <label [for]="'prod-' + product.productId" class="ms-2">
+                      {{ product.name }} <small class="text-muted">₹{{ product.price }}</small>
+                    </label>
+                  </div>
+                }
+                @if (products.length === 0) {
+                  <div class="text-muted small p-2">No products available</div>
+                }
               </div>
             }
-
-            <!-- Category Selection (only when type = CATEGORY) -->
             @if (selectedType === 'CATEGORY') {
-              <div class="form-group mb-3">
-                <label class="form-label">Select Categories</label>
-                <div class="checkbox-list border rounded p-2" style="max-height: 180px; overflow-y: auto;">
-                  @for (category of categories; track category.categoryId) {
-                    <div class="checkbox-item">
-                      <input
-                        type="checkbox"
-                        [id]="'cat-' + category.categoryId"
-                        [checked]="selectedCategoryIds.includes(category.categoryId)"
-                        (change)="toggleCategory(category.categoryId)">
-                      <label [for]="'cat-' + category.categoryId" class="ms-2">
-                        {{ category.categoryName }}
-                      </label>
-                    </div>
-                  }
-                  @if (categories.length === 0) {
-                    <div class="text-muted small p-2">No categories available</div>
-                  }
-                </div>
+              <label class="form-label">Select Categories <span class="text-danger">*</span></label>
+              <div class="checkbox-list border rounded p-2" style="max-height: 140px; overflow-y: auto;">
+                @for (category of categories; track category.categoryId) {
+                  <div class="checkbox-item">
+                    <input type="checkbox" [id]="'cat-' + category.categoryId"
+                      [checked]="selectedCategoryIds.includes(category.categoryId)"
+                      (change)="toggleCategory(category.categoryId)">
+                    <label [for]="'cat-' + category.categoryId" class="ms-2">
+                      {{ category.categoryName }}
+                    </label>
+                  </div>
+                }
+                @if (categories.length === 0) {
+                  <div class="text-muted small p-2">No categories available</div>
+                }
               </div>
             }
+          </div>
 
-            <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+          <!-- Submit -->
+          <div class="col-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary px-5" [disabled]="loading">
               {{ loading ? 'Creating...' : 'Create Promotion' }}
             </button>
-          </form>
-
-          @if (successMessage) {
-            <div class="alert alert-success mt-3">{{ successMessage }}</div>
-          }
-          @if (errorMessage) {
-            <div class="alert alert-danger mt-3">{{ errorMessage }}</div>
-          }
+          </div>
         </div>
-      </div>
+      </form>
     </div>
+  </div>
 
-    <div class="col-lg-7">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="card-title mb-0">
-            {{ filterStatus ? filterStatus + ' Promotions' : 'All Promotions' }}
-          </h5>
-          @if (filterStatus) {
-            <a routerLink="/merchandiser/promotions" class="btn btn-sm btn-outline-secondary">
-              Clear Filter
-            </a>
-          }
-        </div>
-        <div class="card-body">
-          @if (promotions.length > 0) {
-            <div>
-              @for (promo of promotions; track promo.promotionId) {
-                <div class="promotion-item">
-                  <div class="promo-header">
-                    <h6>{{ promo.name }}</h6>
-                    <span class="badge" [ngClass]="getStatusBadgeClass(promo.status)">{{ promo.status }}</span>
-                  </div>
-                  <p class="promo-desc">{{ promo.description }}</p>
-                  <div class="promo-details">
+  <!-- Promotions List — full width -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h5 class="card-title mb-0">
+        Promotions <span class="badge bg-secondary ms-1">{{ promotions.length }}</span>
+      </h5>
+      <select class="form-select form-select-sm" style="width: 180px;"
+        [(ngModel)]="filterStatus" (change)="applyFilter()">
+        <option value="">All Statuses</option>
+        <option value="PENDING">Pending</option>
+        <option value="APPROVED">Approved</option>
+        <option value="REJECTED">Rejected</option>
+      </select>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Discount</th>
+              <th>Dates</th>
+              <th>Apply To</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (promo of promotions; track promo.promotionId) {
+              <tr>
+                <td>
+                  <strong>{{ promo.name }}</strong>
+                  @if (promo.description) {
+                    <div class="text-muted small">{{ promo.description }}</div>
+                  }
+                </td>
+                <td><span class="badge bg-info">{{ promo.discountType }}</span></td>
+                <td>
+                  @if (promo.discountType === 'BOGO') {
+                    <span class="text-success fw-bold">Buy 1 Get 1 FREE</span>
+                  } @else {
                     <span>{{ promo.discountValue }}{{ promo.discountType === 'PERCENTAGE' ? '%' : '₹' }} OFF</span>
-                    <span class="ms-2 badge bg-secondary">{{ promo.type }}</span>
-                    @if (promo.minQuantity) {
-                      <span class="ms-2">Min qty: {{ promo.minQuantity }}</span>
-                    }
-                  </div>
-                  <button (click)="onDeletePromotion(promo.promotionId)" class="btn btn-sm btn-danger mt-1">
-                    Delete
+                  }
+                  @if (promo.minQuantity && promo.discountType !== 'BOGO') {
+                    <div class="text-muted small">Min qty: {{ promo.minQuantity }}</div>
+                  }
+                </td>
+                <td class="small text-muted">
+                  {{ promo.startDate | date: 'dd MMM' }} — {{ promo.endDate | date: 'dd MMM yyyy' }}
+                </td>
+                <td><span class="badge bg-secondary">{{ promo.type }}</span></td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusBadgeClass(promo.status)">{{ promo.status }}</span>
+                </td>
+                <td>
+                  <button (click)="onDeletePromotion(promo.promotionId)" class="btn btn-sm btn-danger">
+                    <i class="bi bi-trash"></i> Delete
                   </button>
-                </div>
-              }
-            </div>
-          }
-          @if (promotions.length === 0) {
-            <div class="text-center text-muted py-5">
-              <p>No promotions created yet</p>
-            </div>
-          }
-        </div>
+                </td>
+              </tr>
+            }
+            @if (promotions.length === 0) {
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">No promotions created yet</td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

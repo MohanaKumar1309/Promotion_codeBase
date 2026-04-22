@@ -210,3 +210,66 @@
     }
   </div>
 </div>
+
+<!-- Payment Confirmation Modal -->
+@if (showPaymentModal) {
+  <div class="payment-overlay" (click)="closePaymentModal()">
+    <div class="payment-modal" (click)="$event.stopPropagation()">
+      <div class="payment-modal-header">
+        <div class="payment-modal-icon"><i class="bi bi-shield-check"></i></div>
+        <h5>Choose Payment Method</h5>
+        <p class="text-muted small mb-0">Total: <strong>₹{{ total | number: '1.2-2' }}</strong></p>
+      </div>
+      <div class="payment-modal-body">
+        <label class="payment-option" [class.selected]="selectedPaymentMethod === 'UPI'">
+          <input type="radio" name="payment" value="UPI" [(ngModel)]="selectedPaymentMethod">
+          <div class="payment-option-inner">
+            <i class="bi bi-phone"></i>
+            <div>
+              <div class="payment-name">UPI</div>
+              <div class="payment-desc">Pay via Google Pay, PhonePe, Paytm</div>
+            </div>
+          </div>
+        </label>
+        <label class="payment-option" [class.selected]="selectedPaymentMethod === 'CARD'">
+          <input type="radio" name="payment" value="CARD" [(ngModel)]="selectedPaymentMethod">
+          <div class="payment-option-inner">
+            <i class="bi bi-credit-card"></i>
+            <div>
+              <div class="payment-name">Credit / Debit Card</div>
+              <div class="payment-desc">Visa, Mastercard, Rupay</div>
+            </div>
+          </div>
+        </label>
+        <label class="payment-option" [class.selected]="selectedPaymentMethod === 'COD'">
+          <input type="radio" name="payment" value="COD" [(ngModel)]="selectedPaymentMethod">
+          <div class="payment-option-inner">
+            <i class="bi bi-cash-coin"></i>
+            <div>
+              <div class="payment-name">Cash on Delivery</div>
+              <div class="payment-desc">Pay when your order arrives</div>
+            </div>
+          </div>
+        </label>
+      </div>
+      <div class="payment-modal-footer">
+        <button class="btn btn-outline-secondary" (click)="closePaymentModal()">Cancel</button>
+        <button class="btn btn-success px-4" (click)="confirmPayment()">
+          <i class="bi bi-check2-circle me-1"></i> Confirm &amp; Pay
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Order Placed Successfully Popup -->
+@if (showOrderSuccess) {
+  <div class="success-overlay">
+    <div class="success-modal">
+      <i class="bi bi-check-circle-fill success-icon"></i>
+      <h4>Order Placed Successfully!</h4>
+      <p>Thank you for your purchase. Redirecting to your orders...</p>
+      <div class="success-spinner"></div>
+    </div>
+  </div>
+}

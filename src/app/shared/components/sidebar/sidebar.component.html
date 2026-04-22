@@ -17,6 +17,7 @@
     @for (item of menuItems; track item.route) {
       <a
         [routerLink]="item.route"
+        [queryParams]="item.queryParams || {}"
         routerLinkActive="active"
         class="nav-item"
         (click)="closeSidebar()">

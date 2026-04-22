@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CampaignService, CatalogService } from '../../../../shared/services';
 import { Campaign, CreateCampaignRequest, Product, Category } from '../../../../shared/models';
@@ -8,7 +8,7 @@ import { Campaign, CreateCampaignRequest, Product, Category } from '../../../../
 @Component({
   selector: 'app-marketing-manager-campaigns',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
   templateUrl: './marketing-manager-campaigns.component.html',
   styleUrl: './marketing-manager-campaigns.component.css'
 })
@@ -42,6 +42,10 @@ export class MarketingManagerCampaignsComponent implements OnInit {
       endDate: ['', Validators.required],
       type: ['PRODUCT', Validators.required]
     });
+  }
+
+  get today(): string {
+    return new Date().toISOString().split('T')[0];
   }
 
   isFieldInvalid(field: string): boolean {

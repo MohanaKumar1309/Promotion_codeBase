@@ -4,177 +4,188 @@
     <p>Generate and manage discount coupons</p>
   </div>
 
-  <div class="row">
-    <div class="col-lg-5">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Generate New Coupon</h5>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="couponForm" (ngSubmit)="onCreateCoupon()">
-            <div class="form-group mb-3">
-              <label class="form-label">Coupon Code</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="couponCode"
-                placeholder="e.g., PROMO10">
-            </div>
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
 
-            <div class="form-group mb-3">
-              <label class="form-label">Coupon Name</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="couponName"
-                placeholder="e.g., Summer Sale">
-            </div>
+  <!-- Create Coupon Form — full width, horizontal rows -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">Generate New Coupon</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="couponForm" (ngSubmit)="onCreateCoupon()">
+        <div class="row g-3">
 
-            <div class="form-group mb-3">
-              <label class="form-label">Description</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="description"
-                placeholder="Coupon description">
-            </div>
+          <!-- Row 1: Code, Name, Description, Discount Type, Amount -->
+          <div class="col-md-2">
+            <label class="form-label">Coupon Code <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="couponCode"
+              placeholder="e.g., SAVE20"
+              [class.is-invalid]="couponForm.get('couponCode')?.invalid && couponForm.get('couponCode')?.touched"
+              style="text-transform: uppercase;">
+            <div class="invalid-feedback">Code required.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Coupon Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="couponName"
+              placeholder="e.g., Summer Sale"
+              [class.is-invalid]="couponForm.get('couponName')?.invalid && couponForm.get('couponName')?.touched">
+            <div class="invalid-feedback">Name required.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Description <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="description"
+              placeholder="Coupon description"
+              [class.is-invalid]="couponForm.get('description')?.invalid && couponForm.get('description')?.touched">
+            <div class="invalid-feedback">Description required.</div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Discount Type</label>
+            <select class="form-control" formControlName="discountType">
+              <option value="FLAT">Flat (₹)</option>
+              <option value="PERCENTAGE">Percentage (%)</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Amount <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="amount"
+              min="0.01" placeholder="50"
+              [class.is-invalid]="couponForm.get('amount')?.invalid && couponForm.get('amount')?.touched">
+            <div class="invalid-feedback">Enter a value greater than 0.</div>
+          </div>
 
-            <div class="form-group mb-3">
-              <label class="form-label">Discount Type</label>
-              <select class="form-control" formControlName="discountType">
-                <option value="FLAT">Flat Amount</option>
-                <option value="PERCENTAGE">Percentage</option>
-              </select>
-            </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">Discount Amount</label>
-              <input
-                type="number"
-                class="form-control"
-                formControlName="amount"
-                min="0"
-                placeholder="0">
-            </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">Minimum Cart Value</label>
-              <input
-                type="number"
-                class="form-control"
-                formControlName="minCartValue"
-                min="0"
-                placeholder="0">
-            </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">Maximum Discount</label>
-              <input
-                type="number"
-                class="form-control"
-                formControlName="maxDiscount"
-                min="0"
-                placeholder="0">
-            </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">Usage Limit</label>
-              <input
-                type="number"
-                class="form-control"
-                formControlName="usageLimit"
-                min="1"
-                placeholder="100">
-            </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">Start Date</label>
-              <input
-                type="date"
-                class="form-control"
-                formControlName="startDate">
-            </div>
-
-            <div class="form-group mb-3">
-              <label class="form-label">End Date</label>
-              <input
-                type="date"
-                class="form-control"
-                formControlName="endDate">
-            </div>
-
-            <button
-              type="submit"
-              class="btn btn-primary w-100"
-              [disabled]="loading">
+          <!-- Row 2: Min Cart, Max Discount, Usage Limit, Start Date, End Date, Submit -->
+          <div class="col-md-2">
+            <label class="form-label">Min Cart Value</label>
+            <input type="number" class="form-control" formControlName="minCartValue"
+              min="0" placeholder="0"
+              [class.is-invalid]="couponForm.get('minCartValue')?.invalid && couponForm.get('minCartValue')?.touched">
+            <div class="invalid-feedback">Cannot be negative.</div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Max Discount <small class="text-muted">(opt)</small></label>
+            <input type="number" class="form-control" formControlName="maxDiscount"
+              min="0" placeholder="500"
+              [class.is-invalid]="couponForm.get('maxDiscount')?.invalid && couponForm.get('maxDiscount')?.touched">
+            <div class="invalid-feedback">Cannot be negative.</div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Usage Limit <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="usageLimit"
+              min="1" placeholder="100"
+              [class.is-invalid]="couponForm.get('usageLimit')?.invalid && couponForm.get('usageLimit')?.touched">
+            <div class="invalid-feedback">Must be at least 1.</div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" formControlName="startDate"
+              [min]="today"
+              [class.is-invalid]="couponForm.get('startDate')?.invalid && couponForm.get('startDate')?.touched">
+            <div class="invalid-feedback">Required.</div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">End Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" formControlName="endDate"
+              [min]="today"
+              [class.is-invalid]="couponForm.get('endDate')?.invalid && couponForm.get('endDate')?.touched">
+            <div class="invalid-feedback">Required.</div>
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
               {{ loading ? 'Creating...' : 'Create Coupon' }}
             </button>
-          </form>
-
-          @if (successMessage) {
-            <div class="alert alert-success mt-3">
-              {{ successMessage }}
-            </div>
-          }
-          @if (errorMessage) {
-            <div class="alert alert-danger mt-3">
-              {{ errorMessage }}
-            </div>
-          }
+          </div>
         </div>
-      </div>
+      </form>
     </div>
+  </div>
 
-    <div class="col-lg-7">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Active Coupons</h5>
-        </div>
-        <div class="card-body">
-          @if (coupons.length > 0) {
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Code</th>
-                    <th>Discount</th>
-                    <th>Min Purchase</th>
-                    <th>Usage</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (coupon of coupons; track coupon.couponId) {
-                    <tr>
-                      <td><strong>{{ coupon.couponCode }}</strong></td>
-                      <td>{{ coupon.amount }}{{ coupon.discountType === 'PERCENTAGE' ? '%' : '₹' }} ({{ coupon.discountType }})</td>
-                      <td>₹{{ coupon.minCartValue | number: '1.2-2' }}</td>
-                      <td>{{ coupon.usageCount }}/{{ coupon.usageLimit }}</td>
-                      <td>
-                        <span class="badge" [ngClass]="coupon.status === 'ACTIVE' ? 'bg-success' : 'bg-secondary'">
-                          {{ coupon.status }}
-                        </span>
-                      </td>
-                      <td>
-                        <button
-                          (click)="onDeleteCoupon(coupon.couponId)"
-                          class="btn btn-sm btn-danger">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
+  <!-- Coupons Table — full width -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h5 class="card-title mb-0">Coupons <span class="badge bg-secondary ms-1">{{ filteredCoupons.length }}</span></h5>
+      <select class="form-select form-select-sm" style="width: 180px;" [(ngModel)]="couponStatusFilter">
+        <option value="">All Statuses</option>
+        <option value="PENDING">Pending</option>
+        <option value="APPROVED">Approved</option>
+        <option value="REJECTED">Rejected</option>
+        <option value="ACTIVE">Active</option>
+        <option value="INACTIVE">Inactive</option>
+      </select>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Discount</th>
+              <th>Min Cart</th>
+              <th>Max Disc</th>
+              <th>Usage</th>
+              <th>Dates</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (coupon of filteredCoupons; track coupon.couponId; let i = $index) {
+              <tr>
+                <td class="text-muted small">{{ i + 1 }}</td>
+                <td><span class="coupon-code-badge">{{ coupon.couponCode }}</span></td>
+                <td>{{ coupon.couponName }}</td>
+                <td>
+                  <span class="text-danger fw-semibold">
+                    {{ coupon.amount }}{{ coupon.discountType === 'PERCENTAGE' ? '%' : '₹' }} OFF
+                  </span>
+                </td>
+                <td>₹{{ coupon.minCartValue | number: '1.0-0' }}</td>
+                <td>
+                  @if (coupon.maxDiscount) {
+                    ₹{{ coupon.maxDiscount | number: '1.0-0' }}
+                  } @else {
+                    <span class="text-muted">—</span>
                   }
-                </tbody>
-              </table>
-            </div>
-          }
-          @if (coupons.length === 0) {
-            <div class="text-center text-muted py-5">
-              <p>No coupons created yet</p>
-            </div>
-          }
-        </div>
+                </td>
+                <td>
+                  <span class="usage-bar">
+                    {{ coupon.usageCount }}<span class="text-muted">/{{ coupon.usageLimit }}</span>
+                  </span>
+                </td>
+                <td class="small text-muted">
+                  {{ coupon.startDate | date: 'dd MMM' }} — {{ coupon.endDate | date: 'dd MMM yy' }}
+                </td>
+                <td>
+                  <span class="badge"
+                    [ngClass]="{
+                      'bg-success': coupon.status === 'APPROVED' || coupon.status === 'ACTIVE',
+                      'bg-warning': coupon.status === 'PENDING',
+                      'bg-danger': coupon.status === 'REJECTED',
+                      'bg-secondary': coupon.status === 'INACTIVE'
+                    }">
+                    {{ coupon.status }}
+                  </span>
+                </td>
+                <td>
+                  <button (click)="onDeleteCoupon(coupon.couponId)" class="btn btn-sm btn-danger">
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (filteredCoupons.length === 0) {
+              <tr>
+                <td colspan="10" class="text-center text-muted py-4">No coupons found</td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

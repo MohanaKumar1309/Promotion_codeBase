@@ -3,12 +3,13 @@ import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { AuthService } from "../../services";
 
-const MENU_MAP: { [key: string]: { icon: string; label: string; route: string }[] } = {
+const MENU_MAP: { [key: string]: { icon: string; label: string; route: string; queryParams?: any }[] } = {
   ADMIN: [
     { icon: "speedometer2", label: "Dashboard", route: "/admin" },
     { icon: "people", label: "Users", route: "/admin/users" },
     { icon: "tags", label: "Categories", route: "/admin/categories" },
     { icon: "box", label: "Products", route: "/admin/products" },
+    { icon: "bag-check", label: "All Orders", route: "/admin/orders" },
     { icon: "file-earmark-text", label: "Audit Logs", route: "/admin/audit-logs" }
   ],
   MERCHANDISER: [
@@ -28,6 +29,8 @@ const MENU_MAP: { [key: string]: { icon: string; label: string; route: string }[
   CUSTOMER: [
     { icon: "shop", label: "Shop", route: "/customer/shop" },
     { icon: "cart", label: "Cart", route: "/customer/cart" },
+    { icon: "percent", label: "Promo Offers", route: "/customer/shop", queryParams: { filter: 'promo' } },
+    { icon: "megaphone", label: "Campaign Deals", route: "/customer/shop", queryParams: { filter: 'campaign' } },
     { icon: "bag-check", label: "My Orders", route: "/customer/orders" }
   ]
 };
@@ -51,7 +54,7 @@ export class SidebarComponent implements OnInit, OnChanges {
   @Input() role: string = "";
 
   isOpen: boolean = false;
-  menuItems: { icon: string; label: string; route: string }[] = [];
+  menuItems: { icon: string; label: string; route: string; queryParams?: any }[] = [];
   userName: string = "";
   userEmail: string = "";
   roleLabel: string = "";

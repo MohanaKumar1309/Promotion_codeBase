@@ -11,6 +11,7 @@ import { AdminUsersComponent } from './modules/admin/components/admin-users/admi
 import { AdminCategoriesComponent } from './modules/admin/components/admin-categories/admin-categories.component';
 import { AdminProductsComponent } from './modules/admin/components/admin-products/admin-products.component';
 import { AdminAuditLogsComponent } from './modules/admin/components/admin-audit-logs/admin-audit-logs.component';
+import { AdminOrdersComponent } from './modules/admin/components/admin-orders/admin-orders.component';
 
 // Merchandiser Components
 import { MerchandiserLayoutComponent } from './modules/merchandiser/merchandiser-layout.component';
@@ -65,6 +66,7 @@ export const routes: Routes = [
       { path: 'users', component: AdminUsersComponent },
       { path: 'categories', component: AdminCategoriesComponent },
       { path: 'products', component: AdminProductsComponent },
+      { path: 'orders', component: AdminOrdersComponent },
       { path: 'audit-logs', component: AdminAuditLogsComponent }
     ]
   },

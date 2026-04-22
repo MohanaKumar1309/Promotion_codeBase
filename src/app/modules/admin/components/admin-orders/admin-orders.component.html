@@ -1,0 +1,116 @@
+<div class="orders-page">
+  <div class="page-header">
+    <h2 class="page-title">All Customer Orders</h2>
+    <div class="header-stats">
+      <div class="stat-chip">
+        <i class="bi bi-bag-check"></i>
+        <span>{{ totalElements }} Orders</span>
+      </div>
+      <div class="stat-chip revenue">
+        <i class="bi bi-currency-rupee"></i>
+        <span>₹{{ totalRevenue | number: '1.2-2' }} Revenue</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Order History</h5>
+      <input
+        type="text"
+        class="form-control search-input"
+        placeholder="Search by customer or order ID..."
+        [(ngModel)]="searchTerm"
+        style="max-width: 280px;">
+    </div>
+    <div class="card-body p-0">
+      @if (loading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-secondary" role="status"></div>
+          <p class="mt-2 text-muted">Loading orders...</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Subtotal</th>
+                <th>Discount</th>
+                <th>Total Paid</th>
+                <th>Savings</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of filteredOrders; track order.orderId) {
+                <tr>
+                  <td><span class="order-id">#{{ order.orderId }}</span></td>
+                  <td>
+                    <div class="customer-cell">
+                      <strong>{{ order.customerName || '—' }}</strong>
+                      <small class="text-muted">{{ order.customerEmail }}</small>
+                    </div>
+                  </td>
+                  <td>₹{{ order.totalAmount | number: '1.2-2' }}</td>
+                  <td>
+                    @if (order.discountAmount > 0) {
+                      <span class="text-success">-₹{{ order.discountAmount | number: '1.2-2' }}</span>
+                    } @else {
+                      <span class="text-muted">—</span>
+                    }
+                  </td>
+                  <td><strong>₹{{ order.finalAmount | number: '1.2-2' }}</strong></td>
+                  <td>
+                    @if (order.discountAmount > 0) {
+                      <span class="badge bg-success">Saved ₹{{ order.discountAmount | number: '1.0-0' }}</span>
+                    }
+                  </td>
+                  <td><small>{{ order.createdAt | date: 'dd MMM yyyy' }}</small></td>
+                </tr>
+              }
+              @if (filteredOrders.length === 0) {
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">No orders found</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages > 1) {
+          <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+            <small class="text-muted">
+              Page {{ currentPage + 1 }} of {{ totalPages }} ({{ totalElements }} total orders)
+            </small>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 0">
+                  <button class="page-link" (click)="goToPage(currentPage - 1)">
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                </li>
+                @for (p of pages; track p) {
+                  @if (p === 0 || p === totalPages - 1 || (p >= currentPage - 1 && p <= currentPage + 1)) {
+                    <li class="page-item" [class.active]="p === currentPage">
+                      <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+                    </li>
+                  } @else if (p === currentPage - 2 || p === currentPage + 2) {
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                  }
+                }
+                <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                  <button class="page-link" (click)="goToPage(currentPage + 1)">
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

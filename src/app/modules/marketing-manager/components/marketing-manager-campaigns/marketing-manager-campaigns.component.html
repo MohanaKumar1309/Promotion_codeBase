@@ -1,246 +1,221 @@
 <div class="campaigns-page">
   <h2 class="page-title">Manage Campaigns</h2>
 
-  <div class="row">
-    <div class="col-lg-6">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Create New Campaign</h5>
-          <p class="card-subtitle">Design targeted marketing campaigns</p>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="campaignForm" (ngSubmit)="onCreateCampaign()">
-            <div class="form-group mb-3">
-              <label class="form-label">Campaign Name</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="campaignName"
-                placeholder="e.g., Spring Sale 2026">
-            </div>
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
 
-            <div class="form-group mb-3">
-              <label class="form-label">Description</label>
-              <textarea
-                class="form-control"
-                formControlName="description"
-                rows="2"
-                placeholder="Campaign description"></textarea>
-            </div>
+  <!-- Create Campaign Form — full width -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">Create New Campaign</h5>
+      <p class="card-subtitle">Design targeted marketing campaigns</p>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="campaignForm" (ngSubmit)="onCreateCampaign()">
+        <div class="row g-3">
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">Min Age</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    [class.is-invalid]="isFieldInvalid('minAge')"
-                    formControlName="minAge"
-                    min="1" max="120"
-                    placeholder="18">
-                  @if (isFieldInvalid('minAge')) {
-                    <small class="text-danger">
-                      Age must be between 1 and 120
-                    </small>
-                  }
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">Max Age</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    [class.is-invalid]="isFieldInvalid('maxAge')"
-                    formControlName="maxAge"
-                    min="1" max="120"
-                    placeholder="65">
-                  @if (isFieldInvalid('maxAge')) {
-                    <small class="text-danger">
-                      Age must be between 1 and 120
-                    </small>
-                  }
-                </div>
-              </div>
-            </div>
+          <!-- Row 1: Name, Description -->
+          <div class="col-md-5">
+            <label class="form-label">Campaign Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control"
+              [class.is-invalid]="isFieldInvalid('campaignName')"
+              formControlName="campaignName"
+              placeholder="e.g., Spring Sale 2026">
+            @if (isFieldInvalid('campaignName')) {
+              <div class="invalid-feedback">Campaign name is required.</div>
+            }
+          </div>
+          <div class="col-md-7">
+            <label class="form-label">Description <span class="text-danger">*</span></label>
+            <input type="text" class="form-control"
+              [class.is-invalid]="isFieldInvalid('description')"
+              formControlName="description"
+              placeholder="Campaign description">
+            @if (isFieldInvalid('description')) {
+              <div class="invalid-feedback">Description is required.</div>
+            }
+          </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">Discount Type</label>
-                  <select
-                    class="form-control"
-                    formControlName="discountType">
-                    <option value="FLAT">Flat Amount</option>
-                    <option value="PERCENTAGE">Percentage</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">Amount (₹)</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    [class.is-invalid]="isFieldInvalid('amount')"
-                    formControlName="amount"
-                    placeholder="100" step="0.01" min="0.01">
-                  @if (isFieldInvalid('amount')) {
-                    <small class="text-danger">Enter a valid amount</small>
-                  }
-                </div>
-              </div>
-            </div>
+          <!-- Row 2: Age Range, Discount Type, Amount, Dates -->
+          <div class="col-md-1">
+            <label class="form-label">Min Age</label>
+            <input type="number" class="form-control"
+              [class.is-invalid]="isFieldInvalid('minAge')"
+              formControlName="minAge" min="1" max="120" placeholder="18">
+            @if (isFieldInvalid('minAge')) {
+              <div class="invalid-feedback d-block" style="font-size:0.75rem">1–120</div>
+            }
+          </div>
+          <div class="col-md-1">
+            <label class="form-label">Max Age</label>
+            <input type="number" class="form-control"
+              [class.is-invalid]="isFieldInvalid('maxAge')"
+              formControlName="maxAge" min="1" max="120" placeholder="65">
+            @if (isFieldInvalid('maxAge')) {
+              <div class="invalid-feedback d-block" style="font-size:0.75rem">1–120</div>
+            }
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Discount Type</label>
+            <select class="form-control" formControlName="discountType">
+              <option value="FLAT">Flat Amount (₹)</option>
+              <option value="PERCENTAGE">Percentage (%)</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Amount <span class="text-danger">*</span></label>
+            <input type="number" class="form-control"
+              [class.is-invalid]="isFieldInvalid('amount')"
+              formControlName="amount" placeholder="100" step="0.01" min="0.01">
+            @if (isFieldInvalid('amount')) {
+              <div class="invalid-feedback">Valid amount required.</div>
+            }
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" formControlName="startDate"
+              [min]="today"
+              [class.is-invalid]="isFieldInvalid('startDate')">
+            @if (isFieldInvalid('startDate')) {
+              <div class="invalid-feedback">Required.</div>
+            }
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">End Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" formControlName="endDate"
+              [min]="today"
+              [class.is-invalid]="isFieldInvalid('endDate')">
+            @if (isFieldInvalid('endDate')) {
+              <div class="invalid-feedback">Required.</div>
+            }
+          </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">Start Date</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    formControlName="startDate">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">End Date</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    formControlName="endDate">
-                </div>
-              </div>
-            </div>
-
-            <!-- Apply To Dropdown -->
-            <div class="form-group mb-3">
-              <label class="form-label">Apply Campaign To</label>
-              <select
-                class="form-control"
-                formControlName="type"
-                (change)="onTypeChange()">
-                <option value="PRODUCT">Specific Products</option>
-                <option value="CATEGORY">Specific Categories</option>
-              </select>
-            </div>
-
-            <!-- Product Selection (only when type = PRODUCT) -->
+          <!-- Row 3: Apply To + Product/Category selection -->
+          <div class="col-md-3">
+            <label class="form-label">Apply Campaign To</label>
+            <select class="form-control" formControlName="type" (change)="onTypeChange()">
+              <option value="PRODUCT">Specific Products</option>
+              <option value="CATEGORY">Specific Categories</option>
+            </select>
+          </div>
+          <div class="col-md-9">
             @if (selectedType === 'PRODUCT') {
-              <div class="form-group mb-3">
-                <label class="form-label">Select Products</label>
-                <div class="checkbox-list border rounded p-2" style="max-height: 200px; overflow-y: auto;">
-                  @for (product of products; track product.productId) {
-                    <div class="form-check">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        [id]="'campaign-product-' + product.productId"
-                        [checked]="selectedProductIds.includes(product.productId)"
-                        (change)="onProductToggle($event, product)">
-                      <label class="form-check-label" [for]="'campaign-product-' + product.productId">
-                        {{ product.name }} <small class="text-muted">₹{{ product.price }}</small>
-                      </label>
-                    </div>
-                  }
-                  @if (products.length === 0) {
-                    <div class="text-muted small p-2">No products available</div>
-                  }
-                </div>
+              <label class="form-label">Select Products <span class="text-danger">*</span></label>
+              <div class="checkbox-list border rounded p-2" style="max-height: 130px; overflow-y: auto;">
+                @for (product of products; track product.productId) {
+                  <div class="checkbox-item">
+                    <input type="checkbox"
+                      [id]="'cmp-product-' + product.productId"
+                      [checked]="selectedProductIds.includes(product.productId)"
+                      (change)="onProductToggle($event, product)">
+                    <label [for]="'cmp-product-' + product.productId" class="ms-2">
+                      {{ product.name }} <small class="text-muted">₹{{ product.price }}</small>
+                    </label>
+                  </div>
+                }
+                @if (products.length === 0) {
+                  <div class="text-muted small p-2">No products available</div>
+                }
               </div>
             }
-
-            <!-- Category Selection (only when type = CATEGORY) -->
             @if (selectedType === 'CATEGORY') {
-              <div class="form-group mb-3">
-                <label class="form-label">Select Categories</label>
-                <div class="checkbox-list border rounded p-2">
-                  @for (category of categories; track category.categoryId) {
-                    <div class="form-check">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        [id]="'campaign-category-' + category.categoryId"
-                        [checked]="selectedCategoryIds.includes(category.categoryId)"
-                        (change)="onCategoryToggle($event, category)">
-                      <label class="form-check-label" [for]="'campaign-category-' + category.categoryId">
-                        {{ category.categoryName }}
-                      </label>
-                    </div>
-                  }
-                  @if (categories.length === 0) {
-                    <div class="text-muted small p-2">No categories available</div>
-                  }
-                </div>
+              <label class="form-label">Select Categories <span class="text-danger">*</span></label>
+              <div class="checkbox-list border rounded p-2" style="max-height: 130px; overflow-y: auto;">
+                @for (category of categories; track category.categoryId) {
+                  <div class="checkbox-item">
+                    <input type="checkbox"
+                      [id]="'cmp-category-' + category.categoryId"
+                      [checked]="selectedCategoryIds.includes(category.categoryId)"
+                      (change)="onCategoryToggle($event, category)">
+                    <label [for]="'cmp-category-' + category.categoryId" class="ms-2">
+                      {{ category.categoryName }}
+                    </label>
+                  </div>
+                }
+                @if (categories.length === 0) {
+                  <div class="text-muted small p-2">No categories available</div>
+                }
               </div>
             }
+          </div>
 
-            @if (successMessage) {
-              <div class="alert alert-success">{{ successMessage }}</div>
-            }
-            @if (errorMessage) {
-              <div class="alert alert-danger">{{ errorMessage }}</div>
-            }
-
-            <button
-              type="submit"
-              class="btn btn-primary w-100"
-              [disabled]="loading">
+          <!-- Submit -->
+          <div class="col-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary px-5" [disabled]="loading">
               {{ loading ? 'Creating...' : 'Create Campaign' }}
             </button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-6">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="card-title mb-0">{{ filterStatus ? filterStatus + ' Campaigns' : 'All Campaigns' }}</h5>
-          @if (filterStatus) {
-            <a routerLink="/marketing-manager/campaigns" class="btn btn-sm btn-outline-secondary">Clear Filter</a>
-          }
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Target</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (campaign of campaigns; track campaign.campaignId) {
-                  <tr>
-                    <td>{{ campaign.campaignName }}</td>
-                    <td>{{ campaign.minAge }} – {{ campaign.maxAge }} yrs</td>
-                    <td>
-                      <span class="badge" [ngClass]="getStatusBadgeClass(campaign.status)">
-                        {{ campaign.status }}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        class="btn btn-sm btn-danger"
-                        (click)="onDeleteCampaign(campaign.campaignId)">
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                }
-                @if (campaigns.length === 0) {
-                  <tr>
-                    <td colspan="4" class="text-center text-muted py-4">No campaigns found</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
           </div>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Campaigns Table — full width -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h5 class="card-title mb-0">
+        Campaigns <span class="badge bg-secondary ms-1">{{ campaigns.length }}</span>
+      </h5>
+      <select class="form-select form-select-sm" style="width: 180px;"
+        [(ngModel)]="filterStatus" (change)="applyFilter()">
+        <option value="">All Statuses</option>
+        <option value="PENDING">Pending</option>
+        <option value="APPROVED">Approved</option>
+        <option value="REJECTED">Rejected</option>
+      </select>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Age Target</th>
+              <th>Discount</th>
+              <th>Dates</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (campaign of campaigns; track campaign.campaignId; let i = $index) {
+              <tr>
+                <td class="text-muted small">{{ i + 1 }}</td>
+                <td>
+                  <strong>{{ campaign.campaignName }}</strong>
+                  @if (campaign.description) {
+                    <div class="text-muted small">{{ campaign.description }}</div>
+                  }
+                </td>
+                <td>{{ campaign.minAge }} – {{ campaign.maxAge }} yrs</td>
+                <td>{{ campaign.amount }}{{ campaign.discountType === 'PERCENTAGE' ? '%' : '₹' }} OFF</td>
+                <td class="small text-muted">
+                  {{ campaign.startDate | date: 'dd MMM' }} — {{ campaign.endDate | date: 'dd MMM yyyy' }}
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusBadgeClass(campaign.status)">
+                    {{ campaign.status }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-danger" (click)="onDeleteCampaign(campaign.campaignId)">
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (campaigns.length === 0) {
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">No campaigns found</td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

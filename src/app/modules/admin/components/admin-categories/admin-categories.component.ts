@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CatalogService } from '../../../../shared/services';
 import { Category, CreateCategoryRequest } from '../../../../shared/models';
@@ -7,7 +8,7 @@ import { Category, CreateCategoryRequest } from '../../../../shared/models';
 @Component({
   selector: 'app-admin-categories',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './admin-categories.component.html',
   styleUrl: './admin-categories.component.css'
 })
@@ -17,6 +18,13 @@ export class AdminCategoriesComponent implements OnInit {
   loading: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
+  categorySearch: string = '';
+
+  get filteredCategories(): Category[] {
+    const term = this.categorySearch.toLowerCase().trim();
+    if (!term) return this.categories;
+    return this.categories.filter(c => c.categoryName.toLowerCase().includes(term));
+  }
 
   constructor(
     private fb: FormBuilder,

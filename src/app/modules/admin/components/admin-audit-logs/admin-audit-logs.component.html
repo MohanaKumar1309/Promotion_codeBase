@@ -3,49 +3,106 @@
 
   <div class="card">
     <div class="card-header">
-      <h5 class="card-title">All System Activities</h5>
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h5 class="card-title mb-0">
+          System Activities
+          <span class="badge bg-secondary ms-1">{{ totalElements }} total</span>
+        </h5>
+        <div class="d-flex gap-2 flex-wrap">
+          <input type="text" class="form-control form-control-sm" style="width:240px"
+            [(ngModel)]="logSearch" placeholder="Search user, action, details...">
+          <select class="form-select form-select-sm" style="width:160px" [(ngModel)]="actionFilter">
+            <option value="">All Actions</option>
+            <option value="CREATE">Create</option>
+            <option value="UPDATE">Update</option>
+            <option value="DELETE">Delete</option>
+            <option value="STATUS">Status Change</option>
+            <option value="LOGIN">Login</option>
+            <option value="LOGOUT">Logout</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover mb-0">
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>User</th>
-              <th>Action</th>
-              <th>Details / Metadata</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (log of auditLogs; track log) {
+      @if (loading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-secondary" role="status"></div>
+          <p class="mt-2 text-muted">Loading logs...</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
               <tr>
-                <td class="text-nowrap">{{ log.timestamp | date: 'dd MMM yyyy, HH:mm' }}</td>
-                <td>
-                  <div class="user-cell">
-                    <div class="user-name">{{ log.userName || 'Unknown' }}</div>
-                    <div class="user-email text-muted">{{ log.userEmail }}</div>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge" [ngClass]="getActionBadgeClass(log.action)">
-                    {{ log.action }}
-                  </span>
-                </td>
-                <td>
-                  <small class="metadata-text">{{ log.metadata || '—' }}</small>
-                </td>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Details / Metadata</th>
               </tr>
-            }
-            @if (auditLogs.length === 0) {
-              <tr>
-                <td colspan="4" class="text-center text-muted py-5">
-                  No audit logs found
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              @for (log of filteredLogs; track log) {
+                <tr>
+                  <td class="text-nowrap">{{ log.timestamp | date: 'dd MMM yyyy, HH:mm' }}</td>
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-name">{{ log.userName || 'Unknown' }}</div>
+                      <div class="user-email text-muted">{{ log.userEmail }}</div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getActionBadgeClass(log.action)">
+                      {{ log.action }}
+                    </span>
+                  </td>
+                  <td>
+                    <small class="metadata-text">{{ log.metadata || '—' }}</small>
+                  </td>
+                </tr>
+              }
+              @if (filteredLogs.length === 0) {
+                <tr>
+                  <td colspan="4" class="text-center text-muted py-5">
+                    No audit logs match your search
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages > 1) {
+          <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+            <small class="text-muted">
+              Showing page {{ currentPage + 1 }} of {{ totalPages }} ({{ totalElements }} records)
+            </small>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 0">
+                  <button class="page-link" (click)="goToPage(currentPage - 1)">
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                </li>
+                @for (p of pages; track p) {
+                  @if (p === 0 || p === totalPages - 1 || (p >= currentPage - 1 && p <= currentPage + 1)) {
+                    <li class="page-item" [class.active]="p === currentPage">
+                      <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+                    </li>
+                  } @else if (p === currentPage - 2 || p === currentPage + 2) {
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                  }
+                }
+                <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                  <button class="page-link" (click)="goToPage(currentPage + 1)">
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        }
+      }
     </div>
   </div>
 </div>

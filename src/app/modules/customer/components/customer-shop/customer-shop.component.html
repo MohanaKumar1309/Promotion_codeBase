@@ -65,6 +65,11 @@
   <!-- Category Filter Bar -->
   <div class="category-filter-bar">
     <div class="filter-inner">
+      @if (filterLabel) {
+        <span class="filter-active-label">
+          <i class="bi bi-funnel-fill"></i> {{ filterLabel }}
+        </span>
+      }
       <button
         (click)="filterByCategory(null)"
         [class.active]="selectedCategoryId === null"
@@ -79,6 +84,36 @@
           {{ cat.categoryName }}
         </button>
       }
+    </div>
+  </div>
+
+  <!-- Price Range + Sort Bar -->
+  <div class="advanced-filter-bar">
+    <div class="filter-advanced-inner">
+      <div class="price-range-group">
+        <i class="bi bi-currency-rupee"></i>
+        <input type="number" class="filter-input" [(ngModel)]="minPrice" (ngModelChange)="onFilterChange()"
+          placeholder="Min price" min="0">
+        <span class="range-sep">—</span>
+        <input type="number" class="filter-input" [(ngModel)]="maxPrice" (ngModelChange)="onFilterChange()"
+          placeholder="Max price" min="0">
+      </div>
+      <div class="sort-group">
+        <i class="bi bi-sort-down"></i>
+        <select class="filter-select" [(ngModel)]="sortOption" (ngModelChange)="onFilterChange()">
+          <option value="">Sort: Default</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="name_az">Name: A → Z</option>
+          <option value="name_za">Name: Z → A</option>
+        </select>
+      </div>
+      @if (minPrice || maxPrice || sortOption) {
+        <button class="clear-filters-btn" (click)="clearFilters()">
+          <i class="bi bi-x-circle"></i> Clear
+        </button>
+      }
+      <span class="results-count">{{ filteredProducts.length }} product{{ filteredProducts.length !== 1 ? 's' : '' }}</span>
     </div>
   </div>
 

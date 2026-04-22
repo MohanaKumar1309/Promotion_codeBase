@@ -1,82 +1,68 @@
 *, *::before, *::after { box-sizing: border-box; }
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: #f0f4f8;
-  color: #2d3748;
+/* ── Dark theme: override Bootstrap's CSS variables ─ */
+[data-bs-theme="dark"] {
+  --bs-body-bg:            #0d1117;
+  --bs-body-color:         #e6edf3;
+  --bs-secondary-color:    #8b949e;
+  --bs-emphasis-color:     #e6edf3;
+  --bs-card-bg:            #161b22;
+  --bs-card-border-color:  #21262d;
+  --bs-border-color:       #30363d;
+  --bs-secondary-bg:       #161b22;
+  --bs-tertiary-bg:        #21262d;
+  --bs-table-bg:           transparent;
+  --bs-table-color:        #e6edf3;
+  --bs-table-striped-color:#e6edf3;
+  --bs-table-hover-color:  #e6edf3;
+  --bs-table-border-color: #21262d;
+  --bs-input-bg:           #0d1117;
+  --bs-form-control-bg:    #0d1117;
 }
 
-/* Cards */
-.card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  border: 1px solid #e2e8f0;
-  margin-bottom: 20px;
-}
-.card-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid #edf2f7;
-  background: transparent;
-}
-.card-title { margin: 0; font-weight: 600; color: #2d3748; font-size: 1rem; }
-.card-body { padding: 20px; }
-
-/* Buttons */
+/* ── Accent: yellow btn-primary for BOTH themes ───── */
 .btn-primary {
-  background: #4a5568;
-  border-color: #4a5568;
-  color: white;
-}
-.btn-primary:hover, .btn-primary:focus {
-  background: #2d3748;
-  border-color: #2d3748;
-  color: white;
-}
-.btn-outline-primary {
-  color: #4a5568;
-  border-color: #4a5568;
-}
-.btn-outline-primary:hover {
-  background: #4a5568;
-  border-color: #4a5568;
-  color: white;
-}
-
-/* Tables */
-.table thead th {
-  background: #f7fafc;
-  color: #718096;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid #e2e8f0;
+  --bs-btn-bg:              #ffc107;
+  --bs-btn-border-color:    #ffc107;
+  --bs-btn-hover-bg:        #ffb300;
+  --bs-btn-hover-border-color: #ffb300;
+  --bs-btn-active-bg:       #e6a200;
+  --bs-btn-color:           #0d1117;
+  --bs-btn-hover-color:     #0d1117;
+  --bs-btn-active-color:    #0d1117;
   font-weight: 600;
 }
-.table td {
-  color: #2d3748;
-  vertical-align: middle;
-  border-bottom: 1px solid #edf2f7;
+.btn-outline-primary {
+  --bs-btn-color:           #ffc107;
+  --bs-btn-border-color:    #ffc107;
+  --bs-btn-hover-bg:        #ffc107;
+  --bs-btn-hover-border-color: #ffc107;
+  --bs-btn-hover-color:     #0d1117;
+  --bs-btn-active-bg:       #ffc107;
+  --bs-btn-active-color:    #0d1117;
 }
 
-/* Badges */
-.badge.bg-success { background-color: #48bb78 !important; }
-.badge.bg-warning { background-color: #ed8936 !important; color: white !important; }
-.badge.bg-danger  { background-color: #fc8181 !important; }
-.badge.bg-secondary { background-color: #718096 !important; }
-
-/* Forms */
-.form-control:focus, .form-select:focus {
-  border-color: #718096;
-  box-shadow: 0 0 0 3px rgba(113,128,150,0.15);
-}
-
-/* Page titles */
+/* ── Page title ──────────────────────────────────── */
 .page-title {
-  color: #2d3748;
   font-weight: 700;
   margin-bottom: 28px;
   font-size: 1.7rem;
+  color: var(--bs-body-color);
 }
 
+/* ── Table: make thead use correct bg in dark mode ── */
+.table thead th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-secondary-color);
+  border-bottom: 2px solid var(--bs-border-color);
+}
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* ── Spinner accent ──────────────────────────────── */
+.spinner-border { color: #ffc107; }

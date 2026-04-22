@@ -31,6 +31,10 @@ export class CatalogService {
     return this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/products`);
   }
 
+  updateProduct(productId: number, request: CreateProductRequest): Observable<ApiResponse<Product>> {
+    return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/products/${productId}`, request);
+  }
+
   deleteProduct(productId: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/products/${productId}`);
   }

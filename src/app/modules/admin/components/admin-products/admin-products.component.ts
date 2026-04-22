@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CatalogService } from '../../../../shared/services';
 import { Product, Category } from '../../../../shared/models';
@@ -7,7 +8,7 @@ import { Product, Category } from '../../../../shared/models';
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './admin-products.component.html',
   styleUrl: './admin-products.component.css'
 })
@@ -18,6 +19,18 @@ export class AdminProductsComponent implements OnInit {
   loading: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
+  editingProductId: number | null = null;
+  productSearch: string = '';
+
+  get filteredProducts(): Product[] {
+    const term = this.productSearch.toLowerCase().trim();
+    if (!term) return this.products;
+    return this.products.filter(p =>
+      p.name.toLowerCase().includes(term) ||
+      (p.sku || '').toLowerCase().includes(term) ||
+      (p.categoryName || '').toLowerCase().includes(term)
+    );
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -58,6 +71,11 @@ export class AdminProductsComponent implements OnInit {
     });
   }
 
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.productForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
   onCreateProduct(): void {
     if (this.productForm.invalid) return;
 
@@ -75,7 +93,7 @@ export class AdminProductsComponent implements OnInit {
     this.catalogService.createProduct(request).subscribe({
       next: () => {
         this.successMessage = 'Product added successfully!';
-        this.productForm.reset();
+        this.productForm.reset({ stockQuantity: 0 });
         this.loadProducts();
         this.loading = false;
         setTimeout(() => { this.successMessage = ''; }, 3000);
@@ -88,10 +106,66 @@ export class AdminProductsComponent implements OnInit {
     });
   }
 
+  startEdit(product: Product): void {
+    this.editingProductId = product.productId;
+    this.productForm.patchValue({
+      name: product.name,
+      sku: product.sku,
+      price: product.price,
+      stockQuantity: product.stockQuantity ?? 0,
+      categoryId: product.categoryId,
+      imageUrl: product.imageUrl || ''
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelEdit(): void {
+    this.editingProductId = null;
+    this.productForm.reset({ stockQuantity: 0 });
+  }
+
+  onUpdateProduct(): void {
+    if (this.productForm.invalid || !this.editingProductId) return;
+
+    this.loading = true;
+    const formVal = this.productForm.value;
+    const request = {
+      name: formVal.name,
+      sku: formVal.sku,
+      price: formVal.price,
+      categoryId: Number(formVal.categoryId),
+      imageUrl: formVal.imageUrl || undefined,
+      stockQuantity: Number(formVal.stockQuantity) || 0
+    };
+
+    this.catalogService.updateProduct(this.editingProductId, request).subscribe({
+      next: () => {
+        this.successMessage = 'Product updated successfully!';
+        this.cancelEdit();
+        this.loadProducts();
+        this.loading = false;
+        setTimeout(() => { this.successMessage = ''; }, 3000);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err?.error?.message || 'Failed to update product.';
+        setTimeout(() => { this.errorMessage = ''; }, 3000);
+      }
+    });
+  }
+
   onDeleteProduct(productId: number): void {
-    if (confirm('Are you sure?')) {
+    if (confirm('Are you sure you want to delete this product?')) {
       this.catalogService.deleteProduct(productId).subscribe({
-        next: () => { this.loadProducts(); }
+        next: () => {
+          this.successMessage = 'Product deleted.';
+          this.loadProducts();
+          setTimeout(() => { this.successMessage = ''; }, 3000);
+        },
+        error: (err) => {
+          this.errorMessage = err?.error?.message || 'Failed to delete product.';
+          setTimeout(() => { this.errorMessage = ''; }, 3000);
+        }
       });
     }
   }

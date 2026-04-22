@@ -1,111 +1,131 @@
 <div class="landing-page">
-  <!-- Header -->
-  <header class="landing-header">
-    <div class="header-container">
-      <div class="brand">
+
+  <!-- Sticky Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#">
         <i class="bi bi-lightning-charge-fill"></i>
         <span>PromoEngineX</span>
-      </div>
-      <nav class="header-nav">
+      </a>
+      <nav class="site-nav">
         <a href="#features">Features</a>
-        <a href="#about">About</a>
+        <a href="#roles">Roles</a>
       </nav>
+      <div class="header-actions">
+        <button class="btn-ghost" (click)="navigateToCustomerLogin()">Sign in</button>
+        <button class="btn-cta" (click)="navigateToCustomerSignup()">Get started</button>
+      </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <div class="hero-section">
+  <!-- Hero -->
+  <section class="hero">
     <div class="hero-inner">
-      <h1 class="hero-title">PromoEngineX</h1>
-      <p class="hero-subtitle">Enterprise Promotions &amp; Offer Management System</p>
-      <p class="hero-description">
-        Manage dynamic pricing, discounts, coupons, and loyalty offers across all channels
+      <div class="hero-eyebrow"><i class="bi bi-stars"></i> Enterprise-ready promotions platform</div>
+      <h1 class="hero-heading">
+        Build smarter<br>
+        <span class="hero-accent">promotions</span> at scale
+      </h1>
+      <p class="hero-sub">
+        Dynamic pricing, coupon engines, and age-targeted campaigns — all in one place.
+        Manage your entire offer lifecycle from creation to redemption.
+      </p>
+      <div class="hero-ctas">
+        <button class="btn-primary-hero" (click)="navigateToCustomerLogin()">
+          <i class="bi bi-bag"></i> Shop as Customer
+        </button>
+        <button class="btn-secondary-hero" (click)="navigateToAdminLogin()">
+          <i class="bi bi-shield-lock"></i> Admin Portal
+        </button>
+      </div>
+      <p class="hero-signup-note">
+        New here? <a (click)="navigateToCustomerSignup()">Create a free account</a>
       </p>
     </div>
-  </div>
+  </section>
 
-  <!-- Portal Cards -->
-  <div class="portal-section" id="about">
-    <div class="container">
-      <div class="row g-4 justify-content-center">
-        <div class="col-md-5">
-          <div class="card portal-card shadow-lg h-100">
-            <div class="card-body text-center p-5 d-flex flex-column">
-              <div class="portal-icon admin-icon">
-                <i class="bi bi-shield-lock"></i>
-              </div>
-              <h2 class="card-title mt-4">Admin Portal</h2>
-              <p class="card-text text-muted flex-grow-1">
-                For Admins, Store Managers, Marketing Managers, and Merchandisers
-              </p>
-              <button
-                class="btn btn-dark btn-lg w-100 mt-4"
-                (click)="navigateToAdminLogin()">
-                Login to Admin Portal
-              </button>
-            </div>
-          </div>
+  <!-- Divider -->
+  <div class="section-divider"></div>
+
+  <!-- Features Grid -->
+  <section class="features-section" id="features">
+    <div class="section-inner">
+      <p class="section-label">Capabilities</p>
+      <h2 class="section-heading">Everything for modern promotions</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-percent"></i></div>
+          <h4>Dynamic Pricing</h4>
+          <p>Flat, percentage, or BOGO promotions applied instantly to products and categories.</p>
         </div>
-
-        <div class="col-md-5">
-          <div class="card portal-card shadow-lg h-100">
-            <div class="card-body text-center p-5 d-flex flex-column">
-              <div class="portal-icon customer-icon">
-                <i class="bi bi-bag"></i>
-              </div>
-              <h2 class="card-title mt-4">Customer Portal</h2>
-              <p class="card-text text-muted flex-grow-1">
-                Browse products, redeem offers, and apply coupons
-              </p>
-              <button
-                class="btn btn-warning btn-lg w-100 mt-4"
-                (click)="navigateToCustomerLogin()">
-                Login as Customer
-              </button>
-              <p class="mt-3 mb-0">
-                <small class="text-muted">New customer? </small>
-                <a href="javascript:void(0)" (click)="navigateToCustomerSignup()" class="text-warning fw-semibold">
-                  Sign up here
-                </a>
-              </p>
-            </div>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-ticket-perforated"></i></div>
+          <h4>Coupon Engine</h4>
+          <p>Generate, distribute, and track coupon codes with usage limits and expiry controls.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-megaphone"></i></div>
+          <h4>Targeted Campaigns</h4>
+          <p>Age-segmented campaigns that reach the right customers with the right offer.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+          <h4>Role-Based Access</h4>
+          <p>Granular permissions for admins, merchandisers, marketers, and store managers.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-bar-chart-line"></i></div>
+          <h4>Analytics</h4>
+          <p>Real-time redemption insights, revenue tracking, and order history at a glance.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-check2-circle"></i></div>
+          <h4>Approval Workflows</h4>
+          <p>Promotions and campaigns go through structured review before going live.</p>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Features Section -->
-  <section class="features-section" id="features">
-    <div class="container">
-      <h2 class="section-title">Everything You Need</h2>
-      <div class="row g-4">
-        <div class="col-md-3 col-sm-6">
-          <div class="feature-item">
-            <i class="bi bi-percent"></i>
-            <h5>Dynamic Pricing</h5>
-            <p>Set percentage, flat, or BOGO promotions instantly</p>
+  <!-- Roles Section -->
+  <section class="roles-section" id="roles">
+    <div class="section-inner">
+      <p class="section-label">Portals</p>
+      <h2 class="section-heading">Built for every team member</h2>
+      <div class="roles-grid">
+        <div class="role-card">
+          <i class="bi bi-person-badge"></i>
+          <div>
+            <h5>Admin</h5>
+            <p>Manage users, products, categories, and view all orders.</p>
           </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-          <div class="feature-item">
-            <i class="bi bi-ticket-perforated"></i>
-            <h5>Coupon Codes</h5>
-            <p>Create and manage unlimited coupon codes</p>
+        <div class="role-card">
+          <i class="bi bi-percent"></i>
+          <div>
+            <h5>Merchandiser</h5>
+            <p>Create and submit promotions for approval.</p>
           </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-          <div class="feature-item">
-            <i class="bi bi-megaphone"></i>
-            <h5>Campaigns</h5>
-            <p>Age-targeted loyalty campaign management</p>
+        <div class="role-card">
+          <i class="bi bi-megaphone"></i>
+          <div>
+            <h5>Marketing Manager</h5>
+            <p>Design campaigns and issue coupon codes.</p>
           </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-          <div class="feature-item">
-            <i class="bi bi-bar-chart-line"></i>
-            <h5>Analytics</h5>
-            <p>Real-time sales and redemption insights</p>
+        <div class="role-card">
+          <i class="bi bi-check2-all"></i>
+          <div>
+            <h5>Store Manager</h5>
+            <p>Approve or reject promotions and monitor analytics.</p>
+          </div>
+        </div>
+        <div class="role-card">
+          <i class="bi bi-bag-heart"></i>
+          <div>
+            <h5>Customer</h5>
+            <p>Shop with live discounts, apply coupons, and track orders.</p>
           </div>
         </div>
       </div>
@@ -113,32 +133,19 @@
   </section>
 
   <!-- Footer -->
-  <footer class="landing-footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <div class="footer-brand-name">
-            <i class="bi bi-lightning-charge-fill"></i>
-            <span>PromoEngineX</span>
-          </div>
-          <p class="footer-tagline">Enterprise-grade promotions for modern businesses.</p>
-        </div>
-        <div class="footer-col">
-          <h6>Portals</h6>
-          <a href="javascript:void(0)" (click)="navigateToAdminLogin()">Admin Portal</a>
-          <a href="javascript:void(0)" (click)="navigateToCustomerLogin()">Customer Portal</a>
-          <a href="javascript:void(0)" (click)="navigateToCustomerSignup()">Sign Up</a>
-        </div>
-        <div class="footer-col">
-          <h6>Product</h6>
-          <span>Promotion Engine</span>
-          <span>Coupon Management</span>
-          <span>Campaign Analytics</span>
-        </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <i class="bi bi-lightning-charge-fill"></i>
+        <span>PromoEngineX</span>
       </div>
-      <div class="footer-bottom">
-        <p>© 2025 PromoEngineX. All rights reserved.</p>
+      <div class="footer-links">
+        <a (click)="navigateToAdminLogin()">Admin Login</a>
+        <a (click)="navigateToCustomerLogin()">Customer Login</a>
+        <a (click)="navigateToCustomerSignup()">Sign Up</a>
       </div>
+      <p class="footer-copy">© 2025 PromoEngineX. All rights reserved.</p>
     </div>
   </footer>
+
 </div>

@@ -1,140 +1,119 @@
 <div class="users-page">
   <h2 class="page-title">Manage Users</h2>
 
-  <div class="row">
-    <div class="col-lg-4">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Create New User</h5>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="userForm" (ngSubmit)="onCreateUser()">
-            <div class="form-group mb-3">
-              <label for="name" class="form-label">Full Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="name"
-                formControlName="name"
-                placeholder="Enter full name"
-                [class.is-invalid]="isFieldInvalid('name')">
-            </div>
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
 
-            <div class="form-group mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input
-                type="email"
-                class="form-control"
-                id="email"
-                formControlName="email"
-                placeholder="Enter email"
-                [class.is-invalid]="isFieldInvalid('email')">
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input
-                type="password"
-                class="form-control"
-                id="password"
-                formControlName="password"
-                placeholder="Enter password"
-                [class.is-invalid]="isFieldInvalid('password')">
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="phone" class="form-label">Phone (Optional)</label>
-              <input
-                type="tel"
-                class="form-control"
-                id="phone"
-                formControlName="phone"
-                placeholder="Enter phone number">
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="role" class="form-label">Role</label>
-              <select
-                class="form-control"
-                id="role"
-                formControlName="role"
-                [class.is-invalid]="isFieldInvalid('role')">
-                <option value="">Select Role</option>
-                <option value="MERCHANDISER">Merchandiser</option>
-                <option value="MARKETING_MANAGER">Marketing Manager</option>
-                <option value="STORE_MANAGER">Store Manager</option>
-              </select>
-            </div>
-
-            @if (successMessage) {
-              <div class="alert alert-success" role="alert">
-                {{ successMessage }}
-              </div>
-            }
-
-            @if (errorMessage) {
-              <div class="alert alert-danger" role="alert">
-                {{ errorMessage }}
-              </div>
-            }
-
-            <button
-              type="submit"
-              class="btn btn-primary w-100"
-              [disabled]="userForm.invalid || loading">
+  <!-- Create Form — full width, horizontal row -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">Create New User</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="userForm" (ngSubmit)="onCreateUser()">
+        <div class="row g-3 align-items-end">
+          <div class="col-md">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" formControlName="name" placeholder="Full name"
+              [class.is-invalid]="isFieldInvalid('name')">
+            <div class="invalid-feedback">Name is required.</div>
+          </div>
+          <div class="col-md">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" placeholder="Email"
+              [class.is-invalid]="isFieldInvalid('email')">
+            <div class="invalid-feedback">Valid email required.</div>
+          </div>
+          <div class="col-md">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" formControlName="password" placeholder="Min 6 characters"
+              [class.is-invalid]="isFieldInvalid('password')">
+            <div class="invalid-feedback">At least 6 characters.</div>
+          </div>
+          <div class="col-md">
+            <label class="form-label">Phone <small class="text-muted">(optional)</small></label>
+            <input type="tel" class="form-control" formControlName="phone" placeholder="Phone number">
+          </div>
+          <div class="col-md">
+            <label class="form-label">Role</label>
+            <select class="form-control" formControlName="role" [class.is-invalid]="isFieldInvalid('role')">
+              <option value="">Select Role</option>
+              <option value="MERCHANDISER">Merchandiser</option>
+              <option value="MARKETING_MANAGER">Marketing Manager</option>
+              <option value="STORE_MANAGER">Store Manager</option>
+            </select>
+            <div class="invalid-feedback">Role is required.</div>
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary px-4" [disabled]="userForm.invalid || loading">
               {{ loading ? 'Creating...' : 'Create User' }}
             </button>
-          </form>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Users Table — full width -->
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h5 class="card-title mb-0">Users List <span class="badge bg-secondary ms-1">{{ filteredUsers.length }}</span></h5>
+        <div class="d-flex gap-2 flex-wrap">
+          <input type="text" class="form-control form-control-sm" style="width:220px"
+            [(ngModel)]="userSearch" placeholder="Search by name or email...">
+          <select class="form-select form-select-sm" style="width:180px" [(ngModel)]="roleFilter">
+            <option value="">All Roles</option>
+            <option value="ADMIN">Admin</option>
+            <option value="MERCHANDISER">Merchandiser</option>
+            <option value="MARKETING_MANAGER">Marketing Manager</option>
+            <option value="STORE_MANAGER">Store Manager</option>
+            <option value="CUSTOMER">Customer</option>
+          </select>
         </div>
       </div>
     </div>
-
-    <div class="col-lg-8">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Users List</h5>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Full Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (user of users; track user.userId) {
-                  <tr>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                      <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
-                        {{ formatRole(user.role) }}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        class="btn btn-sm btn-danger"
-                        (click)="onDeleteUser(user.userId)">
-                        <i class="bi bi-trash"></i> Delete
-                      </button>
-                    </td>
-                  </tr>
-                }
-                @if (users.length === 0) {
-                  <tr>
-                    <td colspan="4" class="text-center text-muted py-4">
-                      No users found
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of filteredUsers; track user.userId; let i = $index) {
+              <tr>
+                <td class="text-muted small">{{ i + 1 }}</td>
+                <td><strong>{{ user.name }}</strong></td>
+                <td class="text-muted">{{ user.email }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
+                    {{ formatRole(user.role) }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-danger" (click)="onDeleteUser(user.userId)">
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (filteredUsers.length === 0) {
+              <tr>
+                <td colspan="5" class="text-center text-muted py-4">No users match your search</td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
