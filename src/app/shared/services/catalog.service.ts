@@ -38,4 +38,10 @@ export class CatalogService {
   deleteProduct(productId: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/products/${productId}`);
   }
+
+  uploadProductImage(file: File): Observable<ApiResponse<string>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/products/upload-image`, formData);
+  }
 }

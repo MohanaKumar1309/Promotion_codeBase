@@ -17,10 +17,15 @@ export class AdminProductsComponent implements OnInit {
   products: Product[] = [];
   categories: Category[] = [];
   loading: boolean = false;
+  uploadingImage: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
   editingProductId: number | null = null;
   productSearch: string = '';
+
+  // Image upload
+  selectedFile: File | null = null;
+  imagePreviewUrl: string = '';
 
   get filteredProducts(): Product[] {
     const term = this.productSearch.toLowerCase().trim();
@@ -54,9 +59,7 @@ export class AdminProductsComponent implements OnInit {
   loadProducts(): void {
     this.catalogService.getProducts().subscribe({
       next: (response) => {
-        if (response.success) {
-          this.products = response.data;
-        }
+        if (response.success) this.products = response.data;
       }
     });
   }
@@ -64,9 +67,7 @@ export class AdminProductsComponent implements OnInit {
   loadCategories(): void {
     this.catalogService.getCategories().subscribe({
       next: (response) => {
-        if (response.success) {
-          this.categories = response.data;
-        }
+        if (response.success) this.categories = response.data;
       }
     });
   }
@@ -76,12 +77,18 @@ export class AdminProductsComponent implements OnInit {
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
-  onCreateProduct(): void {
-    if (this.productForm.invalid) return;
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+    this.selectedFile = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => { this.imagePreviewUrl = reader.result as string; };
+    reader.readAsDataURL(this.selectedFile);
+  }
 
-    this.loading = true;
+  private buildRequest(): any {
     const formVal = this.productForm.value;
-    const request = {
+    return {
       name: formVal.name,
       sku: formVal.sku,
       price: formVal.price,
@@ -89,11 +96,38 @@ export class AdminProductsComponent implements OnInit {
       imageUrl: formVal.imageUrl || undefined,
       stockQuantity: Number(formVal.stockQuantity) || 0
     };
+  }
 
-    this.catalogService.createProduct(request).subscribe({
+  onCreateProduct(): void {
+    if (this.productForm.invalid) return;
+    if (this.selectedFile) {
+      this.uploadingImage = true;
+      this.catalogService.uploadProductImage(this.selectedFile).subscribe({
+        next: (res) => {
+          this.uploadingImage = false;
+          this.productForm.patchValue({ imageUrl: res.data });
+          this.selectedFile = null;
+          this.submitCreate();
+        },
+        error: () => {
+          this.uploadingImage = false;
+          this.errorMessage = 'Image upload failed. Product not saved.';
+          setTimeout(() => { this.errorMessage = ''; }, 3000);
+        }
+      });
+    } else {
+      this.submitCreate();
+    }
+  }
+
+  private submitCreate(): void {
+    this.loading = true;
+    this.catalogService.createProduct(this.buildRequest()).subscribe({
       next: () => {
         this.successMessage = 'Product added successfully!';
         this.productForm.reset({ stockQuantity: 0 });
+        this.imagePreviewUrl = '';
+        this.selectedFile = null;
         this.loadProducts();
         this.loading = false;
         setTimeout(() => { this.successMessage = ''; }, 3000);
@@ -108,6 +142,8 @@ export class AdminProductsComponent implements OnInit {
 
   startEdit(product: Product): void {
     this.editingProductId = product.productId;
+    this.selectedFile = null;
+    this.imagePreviewUrl = product.imageUrl || '';
     this.productForm.patchValue({
       name: product.name,
       sku: product.sku,
@@ -121,24 +157,36 @@ export class AdminProductsComponent implements OnInit {
 
   cancelEdit(): void {
     this.editingProductId = null;
+    this.selectedFile = null;
+    this.imagePreviewUrl = '';
     this.productForm.reset({ stockQuantity: 0 });
   }
 
   onUpdateProduct(): void {
     if (this.productForm.invalid || !this.editingProductId) return;
+    if (this.selectedFile) {
+      this.uploadingImage = true;
+      this.catalogService.uploadProductImage(this.selectedFile).subscribe({
+        next: (res) => {
+          this.uploadingImage = false;
+          this.productForm.patchValue({ imageUrl: res.data });
+          this.selectedFile = null;
+          this.submitUpdate();
+        },
+        error: () => {
+          this.uploadingImage = false;
+          this.errorMessage = 'Image upload failed. Product not saved.';
+          setTimeout(() => { this.errorMessage = ''; }, 3000);
+        }
+      });
+    } else {
+      this.submitUpdate();
+    }
+  }
 
+  private submitUpdate(): void {
     this.loading = true;
-    const formVal = this.productForm.value;
-    const request = {
-      name: formVal.name,
-      sku: formVal.sku,
-      price: formVal.price,
-      categoryId: Number(formVal.categoryId),
-      imageUrl: formVal.imageUrl || undefined,
-      stockQuantity: Number(formVal.stockQuantity) || 0
-    };
-
-    this.catalogService.updateProduct(this.editingProductId, request).subscribe({
+    this.catalogService.updateProduct(this.editingProductId!, this.buildRequest()).subscribe({
       next: () => {
         this.successMessage = 'Product updated successfully!';
         this.cancelEdit();

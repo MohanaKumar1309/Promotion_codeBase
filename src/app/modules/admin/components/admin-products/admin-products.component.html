@@ -61,16 +61,32 @@
             </select>
             <div class="invalid-feedback">Category required.</div>
           </div>
+
+          <!-- Image upload -->
           <div class="col-md-2">
-            <label class="form-label">Image URL <small class="text-muted">(optional)</small></label>
-            <input type="text" class="form-control" formControlName="imageUrl" placeholder="https://...">
+            <label class="form-label">Product Image <small class="text-muted">(optional)</small></label>
+            <input type="file" class="form-control form-control-sm" accept="image/*"
+              (change)="onFileChange($event)">
+            @if (imagePreviewUrl) {
+              <img [src]="imagePreviewUrl" class="product-thumb-preview mt-1"
+                alt="Preview" title="Current image">
+            }
+            @if (uploadingImage) {
+              <div class="text-muted small mt-1">
+                <span class="spinner-border spinner-border-sm me-1"></span> Uploading...
+              </div>
+            }
           </div>
+
           <div class="col-auto d-flex gap-2">
-            <button type="submit" class="btn btn-primary px-4" [disabled]="productForm.invalid || loading">
-              @if (editingProductId) {
-                {{ loading ? 'Saving...' : 'Save Changes' }}
+            <button type="submit" class="btn btn-primary px-4"
+              [disabled]="productForm.invalid || loading || uploadingImage">
+              @if (uploadingImage) {
+                <span class="spinner-border spinner-border-sm me-1"></span> Uploading...
+              } @else if (loading) {
+                {{ editingProductId ? 'Saving...' : 'Adding...' }}
               } @else {
-                {{ loading ? 'Adding...' : 'Add Product' }}
+                {{ editingProductId ? 'Save Changes' : 'Add Product' }}
               }
             </button>
           </div>
@@ -94,6 +110,7 @@
           <thead>
             <tr>
               <th>#</th>
+              <th>Image</th>
               <th>Name</th>
               <th>SKU</th>
               <th>Price</th>
@@ -106,6 +123,13 @@
             @for (product of filteredProducts; track product.productId; let i = $index) {
               <tr [class.table-warning]="editingProductId === product.productId">
                 <td class="text-muted small">{{ i + 1 }}</td>
+                <td>
+                  @if (product.imageUrl) {
+                    <img [src]="product.imageUrl" class="product-thumb-table" alt="{{ product.name }}">
+                  } @else {
+                    <div class="product-thumb-placeholder"><i class="bi bi-image"></i></div>
+                  }
+                </td>
                 <td><strong>{{ product.name }}</strong></td>
                 <td><span class="badge bg-secondary">{{ product.sku }}</span></td>
                 <td>₹{{ product.price | number: '1.2-2' }}</td>
@@ -130,7 +154,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="7" class="text-center text-muted py-4">No products match your search</td>
+                <td colspan="8" class="text-center text-muted py-4">No products match your search</td>
               </tr>
             }
           </tbody>

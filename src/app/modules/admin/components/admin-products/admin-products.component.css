@@ -1,2 +1,34 @@
 .products-page { padding: 20px; }
 .editing-card { border: 2px solid #ffc107 !important; box-shadow: 0 0 0 4px rgba(255,193,7,0.15) !important; }
+
+/* Image preview in form */
+.product-thumb-preview {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--bs-border-color);
+  display: block;
+}
+
+/* Thumbnail in table */
+.product-thumb-table {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--bs-border-color);
+}
+
+.product-thumb-placeholder {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid var(--bs-border-color);
+  background: var(--bs-tertiary-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bs-secondary-color);
+  font-size: 1.1rem;
+}
